@@ -18,7 +18,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.Configuration;
 
-@Mod(modid = "LavaBoat", name = "LavaBoat", version = "1.0.0")
+@Mod(modid = "LavaBoat", name = "LavaBoat", version = "1.1.0")
 @NetworkMod(clientSideRequired = true, serverSideRequired = false)
 public class mod_LavaBoat {
 

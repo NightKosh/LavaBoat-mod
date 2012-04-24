@@ -8,6 +8,8 @@ import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.DamageSource;
@@ -98,28 +100,44 @@ public class EntityLavaBoat extends Entity {
         if (this.isEntityInvulnerable()) {
             return false;
         } else if (!this.worldObj.isRemote && !this.isDead) {
-            this.setForwardDirection(-this.getForwardDirection());
-            this.setTimeSinceHit(10);
-            this.setDamageTaken(this.getDamageTaken() + par2 * 10);
-            this.setBeenAttacked();
-            boolean flag = damageSource.getEntity() instanceof EntityPlayer && ((EntityPlayer) damageSource.getEntity()).capabilities.isCreativeMode;
-
-            if (flag || this.getDamageTaken() > 40) {
-                if (this.riddenByEntity != null) {
-                    this.riddenByEntity.mountEntity(this);
+            if (damageSource.getEntity() instanceof EntityPlayer) {
+                EntityPlayer player = (EntityPlayer) damageSource.getEntity();
+                byte emptySlot = getPlayerEmptySlot(player.inventory.mainInventory);
+                if (emptySlot != -1) {
+                    player.inventory.setInventorySlotContents(emptySlot, new ItemStack(mod_LavaBoat.lavaBoat, 1, 0));
+                    this.setDead();
                 }
+            } else {
+                this.setForwardDirection(-this.getForwardDirection());
+                this.setTimeSinceHit(10);
+                this.setDamageTaken(this.getDamageTaken() + par2 * 10);
+                this.setBeenAttacked();
 
-                if (!flag) {
-                    this.dropItemWithOffset(mod_LavaBoat.lavaBoatId, 1, 0.0F);
+                if (this.getDamageTaken() > 200) {
+                    if (this.riddenByEntity != null) {
+                        this.riddenByEntity.mountEntity(this);
+                    }
+
+                    this.entityDropItem(new ItemStack(mod_LavaBoat.lavaBoat, 1, 0), 0);
+
+                    this.setDead();
                 }
-
-                this.setDead();
             }
 
             return true;
         } else {
             return true;
         }
+    }
+
+    // return empty slot number
+    private static byte getPlayerEmptySlot(ItemStack[] items) {
+        for (byte i = 0; i < items.length; i++) {
+            if (items[i] == null) {
+                return i;
+            }
+        }
+        return (byte) -1;
     }
 
     @SideOnly(Side.CLIENT)
@@ -317,14 +335,6 @@ public class EntityLavaBoat extends Entity {
             this.moveEntity(this.motionX, this.motionY, this.motionZ);
 
             if (this.isCollidedHorizontally && d3 > 0.2D) {
-//                if (!this.worldObj.isRemote) {
-//                    this.setDead();
-//                    int k;
-//
-//                    for (k = 0; k < 5; ++k) {
-//                        this.dropItemWithOffset(Block.obsidian.blockID, 1, 0.0F);
-//                    }
-//                }
             } else {
                 this.motionX *= 0.9900000095367432D;
                 this.motionY *= 0.949999988079071D;
@@ -474,4 +484,5 @@ public class EntityLavaBoat extends Entity {
     public void func_70270_d(boolean par1) {
         this.field_70279_a = par1;
     }
+
 }
