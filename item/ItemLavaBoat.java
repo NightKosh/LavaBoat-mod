@@ -31,8 +31,8 @@ public class ItemLavaBoat extends Item {
     }
 
     @Override
-    public void updateIcons(IconRegister register) {
-        this.iconIndex = register.registerIcon("LavaBoat:lavaboat");
+    public void registerIcons(IconRegister register) {
+        this.itemIcon = register.registerIcon("LavaBoat:lavaboat");
     }
 
     /**
