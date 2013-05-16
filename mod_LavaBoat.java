@@ -18,6 +18,12 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.Configuration;
 
+/*
+ * LavaBoat mod
+ *
+ * @author NightKosh
+ * @license Lesser GNU Public License v3 (http://www.gnu.org/licenses/lgpl.html)
+ */
 @Mod(modid = "LavaBoat", name = "LavaBoat", version = "1.1.0")
 @NetworkMod(clientSideRequired = true, serverSideRequired = false)
 public class mod_LavaBoat {
@@ -61,6 +67,7 @@ public class mod_LavaBoat {
 
         EntityRegistry.registerGlobalEntityID(EntityLavaBoat.class, "LavaBoat", EntityRegistry.findGlobalUniqueEntityId());
         EntityRegistry.registerModEntity(EntityLavaBoat.class, "LavaBoat", 1, this, 40, 1, true);
+        LanguageRegistry.instance().addStringLocalization("entity.LavaBoat.name", "LavaBoat");
 
         proxy.registerRenderers();
     }

@@ -10,6 +10,12 @@ import net.minecraft.entity.Entity;
 import net.minecraft.util.MathHelper;
 import org.lwjgl.opengl.GL11;
 
+/*
+ * LavaBoat mod
+ *
+ * @author NightKosh
+ * @license Lesser GNU Public License v3 (http://www.gnu.org/licenses/lgpl.html)
+ */
 @SideOnly(Side.CLIENT)
 public class RenderLavaBoat extends Render {
 
