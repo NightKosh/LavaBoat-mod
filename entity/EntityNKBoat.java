@@ -3,7 +3,10 @@ package LavaBoat.entity;
 import LavaBoat.mod_LavaBoat;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import java.util.List;
 import java.util.Random;
+import net.minecraft.block.Block;
+import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayer;
@@ -11,6 +14,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 
 /*
@@ -21,6 +25,7 @@ import net.minecraft.world.World;
  */
 public abstract class EntityNKBoat extends Entity {
 
+    public static final double MAX_VELOCITY = 0.5;
     protected boolean field_70279_a;
     protected double field_70276_b;
     protected int boatPosRotationIncrements;
@@ -89,7 +94,7 @@ public abstract class EntityNKBoat extends Entity {
      */
     @Override
     public double getMountedYOffset() {
-        return this.height * 0.0D - 0.30000001192092896D;
+        return -0.30000001192092896;
     }
 
     /**
@@ -325,6 +330,195 @@ public abstract class EntityNKBoat extends Entity {
                     } else {
                         super.applyEntityCollision(entity);
                     }
+                }
+            }
+        }
+    }
+
+    /*
+     * Spawn splashes
+     */
+    protected void spawnSplash(double d3) {
+        if (d3 > 0.26249999999999996) {
+            double d4 = Math.cos(this.rotationYaw * Math.PI / 180D);
+            double d5 = Math.sin(this.rotationYaw * Math.PI / 180D);
+
+            for (int j = 0; j < 1 + d3 * 60; ++j) {
+                double d6 = this.rand.nextFloat() * 2 - 1;
+                double d7 = (this.rand.nextInt(2) * 2 - 1) * 0.7;
+                double splashX;
+                double splashZ;
+
+                if (this.rand.nextBoolean()) {
+                    splashX = this.posX - d4 * d6 * 0.8 + d5 * d7;
+                    splashZ = this.posZ - d5 * d6 * 0.8 - d4 * d7;
+                } else {
+                    splashX = this.posX + d4 + d5 * d6 * 0.7;
+                    splashZ = this.posZ + d5 - d4 * d6 * 0.7;
+                }
+                this.worldObj.spawnParticle("splash", splashX, this.posY - 0.125, splashZ, this.motionX, this.motionY, this.motionZ);
+            }
+        }
+    }
+    
+
+    /**
+     * Called to update the entity's position/logic.
+     */
+    protected void onUpdate(Material material) {
+        // decrease hit time
+        if (this.getTimeSinceHit() > 0) {
+            this.setTimeSinceHit(this.getTimeSinceHit() - 1);
+        }
+        // decrease taken damage
+        if (this.getDamageTaken() > 0) {
+            this.setDamageTaken(this.getDamageTaken() - 1);
+        }
+
+        this.prevPosX = this.posX;
+        this.prevPosY = this.posY;
+        this.prevPosZ = this.posZ;
+        
+        double shiftY = 0;
+
+        AxisAlignedBB axisalignedbb = AxisAlignedBB.getAABBPool().getAABB(this.boundingBox.minX, this.boundingBox.minY - 0.125, this.boundingBox.minZ,
+                this.boundingBox.maxX, this.boundingBox.maxY - 0.125, this.boundingBox.maxZ);
+        if (this.worldObj.isAABBInMaterial(axisalignedbb, material)) {
+            shiftY = 1;
+        }
+
+        double motion = Math.sqrt(this.motionX * this.motionX + this.motionZ * this.motionZ);
+
+        spawnSplash(motion);
+
+        if (this.worldObj.isRemote && this.field_70279_a) {
+            if (this.boatPosRotationIncrements > 0) {
+                double x = this.posX + (this.boatX - this.posX) / this.boatPosRotationIncrements;
+                double y = this.posY + (this.boatY - this.posY) / this.boatPosRotationIncrements;
+                double z = this.posZ + (this.boatZ - this.posZ) / this.boatPosRotationIncrements;
+                
+                double d10 = MathHelper.wrapAngleTo180_double(this.boatYaw - this.rotationYaw);
+                this.rotationYaw = (float) (this.rotationYaw + d10 / this.boatPosRotationIncrements);
+                this.rotationPitch = (float) (this.rotationPitch + (this.boatPitch - this.rotationPitch) / this.boatPosRotationIncrements);
+                this.boatPosRotationIncrements--;
+                this.setPosition(x, y, z);
+                this.setRotation(this.rotationYaw, this.rotationPitch);
+            } else {
+                this.setPosition(this.posX + this.motionX, this.posY + this.motionY, this.posZ + this.motionZ);
+
+                if (this.onGround) {
+                    this.motionX *= 0.5;
+                    this.motionY *= 0.5;
+                    this.motionZ *= 0.5;
+                }
+            }
+        } else {
+            // шаталити
+            if (shiftY < 1) {
+                this.motionY += 0.03999999910593033D * (shiftY * 2 - 1);
+            } else {
+                if (this.motionY < 0) {
+                    this.motionY /= 2D;
+                }
+                this.motionY += 0.007000000216066837;
+            }
+
+            if (this.riddenByEntity != null) {
+                this.motionX += this.riddenByEntity.motionX * this.field_70276_b;
+                this.motionZ += this.riddenByEntity.motionZ * this.field_70276_b;
+            }
+
+            double newMotion = Math.sqrt(this.motionX * this.motionX + this.motionZ * this.motionZ);
+            if (newMotion > MAX_VELOCITY) {
+                double d5 = MAX_VELOCITY / newMotion;
+                this.motionX *= d5;
+                this.motionZ *= d5;
+                newMotion = MAX_VELOCITY;
+            }
+
+            if (newMotion > motion && this.field_70276_b < MAX_VELOCITY) {
+                this.field_70276_b += (MAX_VELOCITY - this.field_70276_b) / 50D;//35D;
+
+                if (this.field_70276_b > MAX_VELOCITY) {
+                    this.field_70276_b = MAX_VELOCITY;
+                }
+            } else {
+                this.field_70276_b -= (this.field_70276_b - 0.07) / 50D;//35D;
+
+                if (this.field_70276_b < 0.07) {
+                    this.field_70276_b = 0.07;
+                }
+            }
+
+            if (this.onGround) {
+                this.motionX *= 0.5;
+                this.motionY *= 0.5;
+                this.motionZ *= 0.5;
+            }
+
+            this.moveEntity(this.motionX, this.motionY, this.motionZ);
+
+            if (this.isCollidedHorizontally && motion > 0.2) {
+                if (!this.worldObj.isRemote && !this.isDead) {
+                    //this.setDead();
+
+                }
+            }
+
+            this.rotationPitch = 0;
+            double rotation = this.rotationYaw;
+            double deltaX = this.prevPosX - this.posX;
+            double deltaZ = this.prevPosZ - this.posZ;
+
+            if (deltaX * deltaX + deltaZ * deltaZ > 0.001) {
+                rotation = Math.atan2(deltaZ, deltaX) * 180 / Math.PI;
+            }
+
+            double d12 = MathHelper.wrapAngleTo180_double(rotation - this.rotationYaw);
+
+            if (d12 > 20) {
+                d12 = 20;
+            }
+
+            if (d12 < -20) {
+                d12 = -20;
+            }
+
+            this.rotationYaw = (float) (this.rotationYaw + d12);
+            this.setRotation(this.rotationYaw, this.rotationPitch);
+
+            // check for collisions with entities
+            if (!this.worldObj.isRemote) {
+                List list = this.worldObj.getEntitiesWithinAABBExcludingEntity(this, this.boundingBox.expand(0.20000000298023224, 0, 0.20000000298023224));
+                int i;
+
+                if (list != null && !list.isEmpty()) {
+                    for (i = 0; i < list.size(); i++) {
+                        Entity entity = (Entity) list.get(i);
+
+                        if (entity != this.riddenByEntity && entity.canBePushed() && entity instanceof EntityReinforcedBoat) {
+                            entity.applyEntityCollision(this);
+                        }
+                    }
+                }
+
+                // remove snow
+                for (i = 0; i < 4; i++) {
+                    int x = MathHelper.floor_double(this.posX + (i % 2 - 0.5) * 0.8);
+                    int z = MathHelper.floor_double(this.posZ + (i / 2 - 0.5) * 0.8);
+
+                    for (int j = 0; j < 2; j++) {
+                        int y = MathHelper.floor_double(this.posY) + j;
+                        int blockId = this.worldObj.getBlockId(x, y, z);
+
+                        if (blockId == Block.snow.blockID) {
+                            this.worldObj.setBlockToAir(x, y, z);
+                        }
+                    }
+                }
+
+                if (this.riddenByEntity != null && this.riddenByEntity.isDead) {
+                    this.riddenByEntity = null;
                 }
             }
         }

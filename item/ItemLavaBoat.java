@@ -60,7 +60,7 @@ public class ItemLavaBoat extends Item {
         float f1 = player.prevRotationPitch + (player.rotationPitch - player.prevRotationPitch) * f;
         float f2 = player.prevRotationYaw + (player.rotationYaw - player.prevRotationYaw) * f;
         double d0 = player.prevPosX + (player.posX - player.prevPosX) * f;
-        double d1 = player.prevPosY + (player.posY - player.prevPosY) * f + 1.62D - player.yOffset;
+        double d1 = player.prevPosY + (player.posY - player.prevPosY) * f + 1.62 - player.yOffset;
         double d2 = player.prevPosZ + (player.posZ - player.prevPosZ) * f;
         Vec3 vec3 = world.getWorldVec3Pool().getVecFromPool(d0, d1, d2);
         float f3 = MathHelper.cos(-f2 * 0.017453292F - (float) Math.PI);
@@ -78,11 +78,10 @@ public class ItemLavaBoat extends Item {
         } else {
             Vec3 vec32 = player.getLook(f);
             boolean flag = false;
-            float f9 = 1.0F;
+            float f9 = 1;
             List list = world.getEntitiesWithinAABBExcludingEntity(player, player.boundingBox.addCoord(vec32.xCoord * d3, vec32.yCoord * d3, vec32.zCoord * d3).expand(f9, f9, f9));
-            int i;
-
-            for (i = 0; i < list.size(); ++i) {
+            
+            for (int i = 0; i < list.size(); i++) {
                 Entity entity = (Entity) list.get(i);
 
                 if (entity.canBeCollidedWith()) {
@@ -110,23 +109,23 @@ public class ItemLavaBoat extends Item {
                     EntityNKBoat NKboat;
                     switch (itemStack.getItemDamage()) {
                         case 1:
-                            NKboat = new EntityDoubleReinforcedBoat(world, x + 0.5F, y + 1.0F, z + 0.5F);
+                            NKboat = new EntityDoubleReinforcedBoat(world, x + 0.5, y + 1, z + 0.5);
                             break;
                         case 2:
-                            NKboat = new EntityLavaBoat(world, x + 0.5F, y + 1.0F, z + 0.5F);
+                            NKboat = new EntityLavaBoat(world, x + 0.5F, y + 1, z + 0.5);
                             break;
                         case 3:
-                            NKboat = new EntityDoubleLavaBoat(world, x + 0.5F, y + 1.0F, z + 0.5F);
+                            NKboat = new EntityDoubleLavaBoat(world, x + 0.5, y + 1, z + 0.5);
                             break;
                         case 0:
                         default:
-                            NKboat = new EntityReinforcedBoat(world, x + 0.5F, y + 1.0F, z + 0.5F);
+                            NKboat = new EntityReinforcedBoat(world, x + 0.5, y + 1, z + 0.5);
                             break;
                     }
                     
-                    NKboat.rotationYaw = (MathHelper.floor_double(player.rotationYaw * 4.0F / 360.0F + 0.5D) & 3 - 1) * 90;
+                    NKboat.rotationYaw = (MathHelper.floor_double(player.rotationYaw * 4 / 360F + 0.5) & 3 - 1) * 90;
 
-                    if (!world.getCollidingBoundingBoxes(NKboat, NKboat.boundingBox.expand(-0.1D, -0.1D, -0.1D)).isEmpty()) {
+                    if (!world.getCollidingBoundingBoxes(NKboat, NKboat.boundingBox.expand(-0.1, -0.1, -0.1)).isEmpty()) {
                         return itemStack;
                     }
 
@@ -150,9 +149,9 @@ public class ItemLavaBoat extends Item {
      */
     @SideOnly(Side.CLIENT)
     @Override
-    public void getSubItems(int par1, CreativeTabs par2CreativeTabs, List par3List) {
-        for (int j = 0; j < boatTypes.length; ++j) {
-            par3List.add(new ItemStack(par1, 1, j));
+    public void getSubItems(int par1, CreativeTabs tab, List list) {
+        for (int j = 0; j < boatTypes.length; j++) {
+            list.add(new ItemStack(par1, 1, j));
         }
     }
 
