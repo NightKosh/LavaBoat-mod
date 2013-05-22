@@ -1,6 +1,9 @@
 package LavaBoat;
 
+import LavaBoat.entity.EntityDoubleLavaBoat;
+import LavaBoat.entity.EntityDoubleReinforcedBoat;
 import LavaBoat.entity.EntityLavaBoat;
+import LavaBoat.entity.EntityReinforcedBoat;
 import LavaBoat.item.ItemLavaBoat;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.Init;
@@ -24,7 +27,7 @@ import net.minecraftforge.common.Configuration;
  * @author NightKosh
  * @license Lesser GNU Public License v3 (http://www.gnu.org/licenses/lgpl.html)
  */
-@Mod(modid = "LavaBoat", name = "LavaBoat", version = "1.1.0")
+@Mod(modid = "LavaBoat", name = "LavaBoat", version = "2.0.0")
 @NetworkMod(clientSideRequired = true, serverSideRequired = false)
 public class mod_LavaBoat {
 
@@ -37,7 +40,6 @@ public class mod_LavaBoat {
     // lava boat
     public static int lavaBoatId;
     public static Item lavaBoat;
-    public static boolean canSwimInWater;
 
     public mod_LavaBoat() {
         instance = this;
@@ -50,24 +52,37 @@ public class mod_LavaBoat {
         config.load();
         
         lavaBoatId = config.getItem("LavaBoat", 9000 - 256).getInt();
-        canSwimInWater = config.get(Configuration.CATEGORY_GENERAL, "CanSwimInWater", false).getBoolean(false);
         
         config.save();
     }
 
     @Init
     public void load(FMLInitializationEvent event) {
-
-        // create chisel
         lavaBoat = new ItemLavaBoat(lavaBoatId);
         LanguageRegistry.addName(lavaBoat, "Lava boat");
 
         // recipe
-        GameRegistry.addRecipe(new ItemStack(lavaBoat), "xyx", "xxx", 'x', Block.obsidian, 'y', Item.minecartEmpty);
+        GameRegistry.addRecipe(new ItemStack(lavaBoat, 1, 0), "xyx", "xxx", 'x', Item.ingotIron, 'y', Item.boat);
+        GameRegistry.addRecipe(new ItemStack(lavaBoat, 1, 1), "xx", 'x', new ItemStack(lavaBoat, 1, 0));
+        GameRegistry.addRecipe(new ItemStack(lavaBoat, 1, 2), "xyx", "xxx", 'x', Block.obsidian, 'y', new ItemStack(lavaBoat, 1, 0));
+        GameRegistry.addRecipe(new ItemStack(lavaBoat, 1, 3), "xx", 'x', new ItemStack(lavaBoat, 1, 2));
 
+        
+        EntityRegistry.registerGlobalEntityID(EntityReinforcedBoat.class, "ReinforcedBoat", EntityRegistry.findGlobalUniqueEntityId());
+        EntityRegistry.registerModEntity(EntityReinforcedBoat.class, "ReinforcedBoat", 0, this, 40, 1, true);
+        LanguageRegistry.instance().addStringLocalization("entity.ReinforcedBoat.name", "Reinforced boat");
+        
+        EntityRegistry.registerGlobalEntityID(EntityDoubleReinforcedBoat.class, "DoubleReinforcedBoat", EntityRegistry.findGlobalUniqueEntityId());
+        EntityRegistry.registerModEntity(EntityDoubleReinforcedBoat.class, "DoubleReinforcedBoat", 1, this, 40, 1, true);
+        LanguageRegistry.instance().addStringLocalization("entity.DoubleReinforcedBoat.name", "Reinforced double boat");
+        
         EntityRegistry.registerGlobalEntityID(EntityLavaBoat.class, "LavaBoat", EntityRegistry.findGlobalUniqueEntityId());
-        EntityRegistry.registerModEntity(EntityLavaBoat.class, "LavaBoat", 1, this, 40, 1, true);
-        LanguageRegistry.instance().addStringLocalization("entity.LavaBoat.name", "LavaBoat");
+        EntityRegistry.registerModEntity(EntityLavaBoat.class, "LavaBoat", 2, this, 40, 1, true);
+        LanguageRegistry.instance().addStringLocalization("entity.LavaBoat.name", "Lava boat");
+        
+        EntityRegistry.registerGlobalEntityID(EntityDoubleLavaBoat.class, "DoubleLavaBoat", EntityRegistry.findGlobalUniqueEntityId());
+        EntityRegistry.registerModEntity(EntityDoubleLavaBoat.class, "DoubleLavaBoat", 3, this, 40, 1, true);
+        LanguageRegistry.instance().addStringLocalization("entity.DoubleLavaBoat.name", "Double lava boat");
 
         proxy.registerRenderers();
     }

@@ -1,7 +1,10 @@
 package LavaBoat.client;
 
 import LavaBoat.CommonProxy;
+import LavaBoat.entity.EntityDoubleLavaBoat;
+import LavaBoat.entity.EntityDoubleReinforcedBoat;
 import LavaBoat.entity.EntityLavaBoat;
+import LavaBoat.entity.EntityReinforcedBoat;
 import LavaBoat.renderer.RenderLavaBoat;
 import cpw.mods.fml.client.registry.RenderingRegistry;
 
@@ -13,7 +16,11 @@ import cpw.mods.fml.client.registry.RenderingRegistry;
  */
 public class ClientProxy extends CommonProxy {
 
+    @Override
     public void registerRenderers() {
-        RenderingRegistry.registerEntityRenderingHandler(EntityLavaBoat.class, new RenderLavaBoat());
+        RenderingRegistry.registerEntityRenderingHandler(EntityReinforcedBoat.class, new RenderLavaBoat((byte) 0));
+        RenderingRegistry.registerEntityRenderingHandler(EntityDoubleReinforcedBoat.class, new RenderLavaBoat((byte) 1));
+        RenderingRegistry.registerEntityRenderingHandler(EntityLavaBoat.class, new RenderLavaBoat((byte) 2));
+        RenderingRegistry.registerEntityRenderingHandler(EntityDoubleLavaBoat.class, new RenderLavaBoat((byte) 3));
     }
 }
