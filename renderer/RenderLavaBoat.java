@@ -28,8 +28,8 @@ public class RenderLavaBoat extends Render {
 
     public RenderLavaBoat(byte boatType) {
         this.shadowSize = 0.5F;
-        this.modelBoat = getBoatModel();
         this.boatType = boatType;
+        this.modelBoat = getBoatModel();
     }
 
     /**
@@ -56,6 +56,10 @@ public class RenderLavaBoat extends Render {
 
         getTexture();
         GL11.glScalef(-1.0F, -1.0F, 1.0F);
+        
+        if (boatType == 1 || boatType == 3) {
+                GL11.glRotatef(180, 0.0F, 1.0F, 0.0F);
+        }
         this.modelBoat.render(boat, 0.0F, 0.0F, -0.1F, 0.0F, 0.0F, 0.0625F);
         GL11.glPopMatrix();
     }
