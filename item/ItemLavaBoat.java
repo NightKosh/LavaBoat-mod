@@ -31,12 +31,12 @@ import net.minecraft.world.World;
  */
 public class ItemLavaBoat extends Item {
 
-    private static final String[] boatTypes = new String[] {
-        "Reinforced boat", "Double reinforced boat", 
-        "Lava boat", "Double lava boat"
+    public static final String[] NAMES = new String[]{
+        "Reinforced boat", "Large reinforced boat",
+        "Lava boat", "Large lava boat"
     };
-    public static final String[] iconsPath = new String[] {
-        "LavaBoat:reinforcedBoat", "LavaBoat:doubleReinforcedBoat", 
+    public static final String[] ICONS_PATH = new String[]{
+        "LavaBoat:reinforcedBoat", "LavaBoat:doubleReinforcedBoat",
         "LavaBoat:lavaBoat", "LavaBoat:doubleLavaBoat"
     };
     @SideOnly(Side.CLIENT)
@@ -56,39 +56,40 @@ public class ItemLavaBoat extends Item {
      */
     @Override
     public ItemStack onItemRightClick(ItemStack itemStack, World world, EntityPlayer player) {
-        float f = 1.0F;
-        float f1 = player.prevRotationPitch + (player.rotationPitch - player.prevRotationPitch) * f;
-        float f2 = player.prevRotationYaw + (player.rotationYaw - player.prevRotationYaw) * f;
-        double d0 = player.prevPosX + (player.posX - player.prevPosX) * f;
-        double d1 = player.prevPosY + (player.posY - player.prevPosY) * f + 1.62 - player.yOffset;
-        double d2 = player.prevPosZ + (player.posZ - player.prevPosZ) * f;
-        Vec3 vec3 = world.getWorldVec3Pool().getVecFromPool(d0, d1, d2);
+        float f1 = player.prevRotationPitch + (player.rotationPitch - player.prevRotationPitch);
+        float f2 = player.prevRotationYaw + (player.rotationYaw - player.prevRotationYaw);
+
+        double xPosition = player.prevPosX + player.posX - player.prevPosX;
+        double yPosition = player.prevPosY + player.posY - player.prevPosY + 1.62 - player.yOffset;
+        double zPosition = player.prevPosZ + player.posZ - player.prevPosZ;
+        Vec3 positionVec = world.getWorldVec3Pool().getVecFromPool(xPosition, yPosition, zPosition);
+
         float f3 = MathHelper.cos(-f2 * 0.017453292F - (float) Math.PI);
         float f4 = MathHelper.sin(-f2 * 0.017453292F - (float) Math.PI);
         float f5 = -MathHelper.cos(-f1 * 0.017453292F);
         float f6 = MathHelper.sin(-f1 * 0.017453292F);
         float f7 = f4 * f5;
         float f8 = f3 * f5;
-        double d3 = 5.0D;
-        Vec3 vec31 = vec3.addVector(f7 * d3, f6 * d3, f8 * d3);
-        MovingObjectPosition objectPosition = world.rayTraceBlocks_do(vec3, vec31, true);
+        double d3 = 5;
+        Vec3 vec31 = positionVec.addVector(f7 * d3, f6 * d3, f8 * d3);
+        MovingObjectPosition objectPosition = world.rayTraceBlocks_do(positionVec, vec31, true);
 
         if (objectPosition == null) {
             return itemStack;
         } else {
-            Vec3 vec32 = player.getLook(f);
+            Vec3 vec32 = player.getLook(1);
             boolean flag = false;
             float f9 = 1;
             List list = world.getEntitiesWithinAABBExcludingEntity(player, player.boundingBox.addCoord(vec32.xCoord * d3, vec32.yCoord * d3, vec32.zCoord * d3).expand(f9, f9, f9));
-            
+
             for (int i = 0; i < list.size(); i++) {
                 Entity entity = (Entity) list.get(i);
 
                 if (entity.canBeCollidedWith()) {
-                    float f10 = entity.getCollisionBorderSize();
-                    AxisAlignedBB axisalignedbb = entity.boundingBox.expand(f10, f10, f10);
+                    float collisionSize = entity.getCollisionBorderSize();
+                    AxisAlignedBB axisalignedbb = entity.boundingBox.expand(collisionSize, collisionSize, collisionSize);
 
-                    if (axisalignedbb.isVecInside(vec3)) {
+                    if (axisalignedbb.isVecInside(positionVec)) {
                         flag = true;
                     }
                 }
@@ -122,7 +123,7 @@ public class ItemLavaBoat extends Item {
                             NKboat = new EntityReinforcedBoat(world, x + 0.5, y + 1, z + 0.5);
                             break;
                     }
-                    
+
                     NKboat.rotationYaw = (MathHelper.floor_double(player.rotationYaw * 4 / 360F + 0.5) & 3 - 1) * 90;
 
                     if (!world.getCollidingBoundingBoxes(NKboat, NKboat.boundingBox.expand(-0.1, -0.1, -0.1)).isEmpty()) {
@@ -150,7 +151,7 @@ public class ItemLavaBoat extends Item {
     @SideOnly(Side.CLIENT)
     @Override
     public void getSubItems(int par1, CreativeTabs tab, List list) {
-        for (int j = 0; j < boatTypes.length; j++) {
+        for (int j = 0; j < NAMES.length; j++) {
             list.add(new ItemStack(par1, 1, j));
         }
     }
@@ -169,7 +170,7 @@ public class ItemLavaBoat extends Item {
     @SideOnly(Side.CLIENT)
     @Override
     public Icon getIconFromDamage(int damage) {
-        if (damage < 0 || damage >= boatTypes.length) {
+        if (damage < 0 || damage >= NAMES.length) {
             damage = 0;
         }
 
@@ -184,13 +185,11 @@ public class ItemLavaBoat extends Item {
     @Override
     public String getUnlocalizedName(ItemStack stack) {
         int i = stack.getItemDamage();
-
-        if (i < 0 || i >= boatTypes.length) {
+        if (i < 0 || i >= NAMES.length) {
             i = 0;
         }
 
-        //return super.getUnlocalizedName() + "." + boatTypes[i];
-        return boatTypes[i];
+        return NAMES[i];
     }
 
     /**
@@ -200,10 +199,10 @@ public class ItemLavaBoat extends Item {
     @SideOnly(Side.CLIENT)
     @Override
     public void registerIcons(IconRegister register) {
-        this.icons = new Icon[iconsPath.length];
+        this.icons = new Icon[ICONS_PATH.length];
 
-        for (int i = 0; i < iconsPath.length; i++) {
-            this.icons[i] = register.registerIcon(iconsPath[i]);
+        for (int i = 0; i < ICONS_PATH.length; i++) {
+            this.icons[i] = register.registerIcon(ICONS_PATH[i]);
         }
     }
 }

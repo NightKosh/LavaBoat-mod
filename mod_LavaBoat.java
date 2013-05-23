@@ -59,7 +59,11 @@ public class mod_LavaBoat {
     @Init
     public void load(FMLInitializationEvent event) {
         lavaBoat = new ItemLavaBoat(lavaBoatId);
-        LanguageRegistry.addName(lavaBoat, "Lava boat");
+        GameRegistry.registerItem(lavaBoat, "Lava boat");
+        for (byte i = 0; i < ItemLavaBoat.NAMES.length; i++) {
+            ItemStack boatStack = new ItemStack(lavaBoat, 1, i);
+            LanguageRegistry.addName(boatStack, ItemLavaBoat.NAMES[i]);
+        }
 
         // recipe
         GameRegistry.addRecipe(new ItemStack(lavaBoat, 1, 0), "xyx", "xxx", 'x', Item.ingotIron, 'y', Item.boat);
