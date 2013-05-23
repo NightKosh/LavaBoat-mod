@@ -30,11 +30,12 @@ public class EntityDoubleLavaBoat extends EntityDoubleBoat {
     }
 
     /**
-     * Returns the Y offset from the entity's position for any entity riding this one.
+     * Returns the Y offset from the entity's position for any entity riding
+     * this one.
      */
     @Override
     public double getMountedYOffset() {
-        return 0.20000001192092896;
+        return 0.75;
     }
 
     /**
@@ -52,6 +53,6 @@ public class EntityDoubleLavaBoat extends EntityDoubleBoat {
     public void onUpdate() {
         super.onUpdate();
         
-        onUpdate(Material.lava);
+        onUpdate(Material.lava, -0.4, "lava");
     }
 }

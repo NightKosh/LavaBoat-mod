@@ -43,6 +43,6 @@ public class EntityDoubleReinforcedBoat extends EntityDoubleBoat {
     public void onUpdate() {
         super.onUpdate();
         
-        onUpdate(Material.water);
+        onUpdate(Material.water, -0.4, "splash");
     }
 }

@@ -34,7 +34,7 @@ public class EntityLavaBoat extends EntityNKBoat {
      */
     @Override
     public double getMountedYOffset() {
-        return 0.20000001192092896;
+        return 0.35;
     }
 
     /**
@@ -52,6 +52,6 @@ public class EntityLavaBoat extends EntityNKBoat {
     public void onUpdate() {
         super.onUpdate();
         
-        onUpdate(Material.lava);
+        onUpdate(Material.lava, -0.05, "lava");
     }
 }
