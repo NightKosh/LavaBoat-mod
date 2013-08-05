@@ -20,7 +20,7 @@ public class ClientProxy extends CommonProxy {
     public void registerRenderers() {
         RenderingRegistry.registerEntityRenderingHandler(EntityReinforcedBoat.class, new RenderLavaBoat((byte) 0));
         RenderingRegistry.registerEntityRenderingHandler(EntityDoubleReinforcedBoat.class, new RenderLavaBoat((byte) 1));
-        RenderingRegistry.registerEntityRenderingHandler(EntityLavaBoat.class, new RenderLavaBoat((byte) 2));
-        RenderingRegistry.registerEntityRenderingHandler(EntityDoubleLavaBoat.class, new RenderLavaBoat((byte) 3));
+        RenderingRegistry.registerEntityRenderingHandler(EntityLavaBoat.class, new RenderLavaBoat((byte) 3));
+        RenderingRegistry.registerEntityRenderingHandler(EntityDoubleLavaBoat.class, new RenderLavaBoat((byte) 4));
     }
 }

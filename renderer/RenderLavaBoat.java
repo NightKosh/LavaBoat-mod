@@ -1,5 +1,6 @@
 package LavaBoat.renderer;
 
+import LavaBoat.Resources;
 import LavaBoat.entity.EntityNKBoat;
 import LavaBoat.model.ModelDoubleBoat;
 import cpw.mods.fml.relauncher.Side;
@@ -72,12 +73,13 @@ public class RenderLavaBoat extends Render {
      * void doRender(T entity, double d, double d1, double d2, float f, float
      * f1). But JAD is pre 1.5 so doesn't do that.
      */
+    @Override
     public void doRender(Entity entity, double par2, double par4, double par6, float par8, float par9) {
         this.renderBoat((EntityNKBoat) entity, par2, par4, par6, par8, par9);
     }
 
     private ModelBase getBoatModel() {
-        if (boatType == 0 || boatType == 2) {
+        if (boatType == 0 || boatType == 3) {
             return new ModelBoat();
         } else {
             return new ModelDoubleBoat();
@@ -87,16 +89,22 @@ public class RenderLavaBoat extends Render {
     private void getTexture() {
         switch (boatType) {
             case 0:
-                this.loadTexture("/mods/LavaBoat/textures/ReinforcedBoat.png");
+                this.loadTexture(Resources.MODEL_REINFORCES_BOAT);
                 break;
             case 1:
-                this.loadTexture("/mods/LavaBoat/textures/ReinforcedDoubleBoat.png");
+                this.loadTexture(Resources.MODEL_DOUBLE_REINFORCED_BOAT);
                 break;
             case 2:
-                this.loadTexture("/mods/LavaBoat/textures/LavaBoat.png");
+                this.loadTexture(Resources.MODEL_CARGO_REINFORCED_BOAT);
                 break;
             case 3:
-                this.loadTexture("/mods/LavaBoat/textures/DoubleLavaBoat.png");
+                this.loadTexture(Resources.MODEL_LAVA_BOAT);
+                break;
+            case 4:
+                this.loadTexture(Resources.MODEL_DOUBLE_LAVA_BOAT);
+                break;
+            case 5:
+                this.loadTexture(Resources.MODEL_CARGO_LAVA_BOAT);
                 break;
         }
     }

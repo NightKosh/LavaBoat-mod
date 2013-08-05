@@ -1,12 +1,14 @@
 package LavaBoat.entity;
 
-import java.util.Iterator;
-import java.util.List;
+import LavaBoat.ModLavaBoat;
+import java.util.Random;
+import net.minecraft.block.material.Material;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EnumEntitySize;
-import net.minecraft.entity.passive.EntityOcelot;
-import net.minecraft.entity.passive.EntityTameable;
-import net.minecraft.entity.passive.EntityWolf;
-import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.DamageSource;
 import net.minecraft.world.World;
 
 /*
@@ -17,9 +19,14 @@ import net.minecraft.world.World;
  */
 public abstract class EntityDoubleBoat extends EntityNKBoat {
 
+    protected EntityPetBoat petSeat;
+
     public EntityDoubleBoat(World world) {
         super(world);
-        this.setSize(3.5F, 1.5F, 0.6F);
+        this.setSize(3F, 1.25F, 0.6F);
+
+        this.petSeat = new EntityPetBoat(world, this);
+        worldObj.spawnEntityInWorld(this.petSeat);
     }
 
     /**
@@ -66,45 +73,111 @@ public abstract class EntityDoubleBoat extends EntityNKBoat {
         if (this.riddenByEntity != null) {
             double xShift = Math.cos(this.rotationYaw * Math.PI / 180D);
             double zShift = Math.sin(this.rotationYaw * Math.PI / 180D);
-            this.riddenByEntity.setPosition(this.posX - xShift * 1.2, this.posY + this.getMountedYOffset() + this.riddenByEntity.getYOffset(), this.posZ - zShift * 1.2);
+            this.riddenByEntity.setPosition(this.posX - xShift * 0.5, this.posY + this.getMountedYOffset() + this.riddenByEntity.getYOffset(), this.posZ - zShift * 0.5);
+        }
+    }
 
-            if (this.riddenByPet != null) {
-                this.riddenByPet.setPosition(this.posX + xShift * 0.4, this.posY + this.getMountedYOffset() + this.riddenByPet.getYOffset(), this.posZ + zShift * 0.4);
-            } else {
-                AxisAlignedBB petArea = AxisAlignedBB.getBoundingBox(this.boundingBox.minX - 7, this.boundingBox.minY - 7, this.boundingBox.minZ - 7,
-                        this.boundingBox.maxX + 7, this.boundingBox.maxY + 7, this.boundingBox.maxZ + 7);
+    /**
+     * Called when a player interacts with a mob. e.g. gets milk from a cow,
+     * gets into the saddle on a pig.
+     */
+    @Override
+    public boolean interact(EntityPlayer player) {
+        if (!this.worldObj.isRemote) {
+            if (this.riddenByEntity == null) {
+                System.out.println("interact");
+                player.mountEntity(this);
 
-                if (!mountPet(petArea, EntityWolf.class)) {
-                    mountPet(petArea, EntityOcelot.class);
+                if (this.petSeat.riddenByEntity == null) {
+                    System.out.println("mount");
+                    petSeat.findAndMountPet();
                 }
+            } else if (this.petSeat.riddenByEntity != null) {
+                
+                    System.out.println("unmount");
+                petSeat.unmountPet();
             }
-        } else {
-            if (this.riddenByPet != null) {
-                unMountPet();
+        }
+
+        return true;
+    }
+
+    /**
+     * Applies a velocity to each of the entities pushing them away from each
+     * other. Args: entity
+     */
+    @Override
+    public void applyEntityCollision(Entity entity) {
+        if (!this.worldObj.isRemote) {
+            if (entity != this.riddenByEntity && entity != this.petSeat && entity != this.petSeat.riddenByEntity || this.petSeat == null) {
+                if (this.riddenByEntity != null) {
+                    if (this.motionX * this.motionX + this.motionZ * this.motionZ > 0.01D) {
+                        entity.motionX = this.motionX * 6;
+                        entity.motionZ = this.motionX * 6;
+                        entity.motionY = 0.5;
+                        if (Math.abs(this.motionX) > Math.abs(this.motionZ)) {
+                            entity.motionZ += new Random().nextFloat() - 0.5;
+                        } else {
+                            entity.motionX += new Random().nextFloat() - 0.5;
+                        }
+                    }
+                } else {
+                    if (entity instanceof EntityLiving && !(entity instanceof EntityPlayer) && this.motionX * this.motionX + this.motionZ * this.motionZ > 0.01D) {
+                        entity.mountEntity(this);
+                    } else {
+                        super.applyEntityCollision(entity);
+                    }
+                }
             }
         }
     }
 
-    /*
-     * Mount pet to boat
+    /**
+     * Called to update the entity's position/logic.
      */
-    private boolean mountPet(AxisAlignedBB petArea, Class petClass) {
-        List <EntityTameable> petsList = this.worldObj.getEntitiesWithinAABB(petClass, petArea);
+    @Override
+    protected void onUpdate(Material material, double yShift, String particles) {
+        super.onUpdate(material, yShift, particles);
 
-        if (!petsList.isEmpty()) {
-            Iterator <EntityTameable> it = petsList.iterator();
-            EntityTameable pet;
-            while (it.hasNext()) {
-                pet = it.next();
-                if (pet != null && pet.isTamed() && pet.getOwner() != null && pet.getOwner().equals(this.riddenByEntity) && pet.ridingEntity == null) {
-                    pet.ridingEntity = this;
-                    this.riddenByPet = pet;
-                    pet.setSitting(true);
-                    return true;
+
+        //System.out.println("Boat position " + this.posX + "x" + this.posY + "x" + this.posZ);
+        //System.out.println("Pet boat position " + this.petSeat.posX + "x" + this.petSeat.posY + "x" + this.petSeat.posZ);
+        //if (this.petSeat.riddenByEntity != null)
+        //System.out.println("Pet position " + this.petSeat.riddenByEntity.posX + "x" + this.petSeat.riddenByEntity.posY + "x" + this.petSeat.riddenByEntity.posZ);
+
+        //System.out.println("---------------------");
+    }
+
+    /**
+     * Called when the entity is attacked.
+     */
+    @Override
+    public boolean attackEntityFrom(DamageSource damageSource, int itemDamage, int par2) {
+        if (this.isEntityInvulnerable()) {
+            return false;
+        } else if (!this.worldObj.isRemote && !this.isDead) {
+            if (damageSource.getEntity() instanceof EntityPlayer) {
+                EntityPlayer player = (EntityPlayer) damageSource.getEntity();
+                byte emptySlot = getPlayerEmptySlot(player.inventory.mainInventory);
+                if (emptySlot != -1) {
+                    player.inventory.setInventorySlotContents(emptySlot, new ItemStack(ModLavaBoat.lavaBoat, 1, itemDamage));
+                    this.setDead();
+                }
+            } else {
+                this.setForwardDirection(-this.getForwardDirection());
+                this.setTimeSinceHit(10);
+                this.setDamageTaken(this.getDamageTaken() + par2 * 10);
+                this.setBeenAttacked();
+
+                if (this.getDamageTaken() > 200) {
+                    this.entityDropItem(new ItemStack(ModLavaBoat.lavaBoat, 1, itemDamage), 0);
+                    this.setDead();
                 }
             }
-        }
 
-        return false;
+            return true;
+        } else {
+            return true;
+        }
     }
 }

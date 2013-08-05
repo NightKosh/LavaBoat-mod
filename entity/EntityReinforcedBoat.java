@@ -18,7 +18,7 @@ public class EntityReinforcedBoat extends EntityNKBoat {
 
     public EntityReinforcedBoat(World world, double x, double y, double z) {
         this(world);
-        this.setPosition(x, y + this.yOffset, z);
+        this.setPosition(x + 0.5, y + this.yOffset + 1, z + 0.5);
         this.motionX = 0;
         this.motionY = 0;
         this.motionZ = 0;

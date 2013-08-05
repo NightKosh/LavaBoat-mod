@@ -1,6 +1,6 @@
 package LavaBoat.entity;
 
-import LavaBoat.mod_LavaBoat;
+import LavaBoat.ModLavaBoat;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import java.util.List;
@@ -9,7 +9,6 @@ import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.passive.EntityTameable;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -42,10 +41,6 @@ public abstract class EntityNKBoat extends Entity {
     protected double velocityY;
     @SideOnly(Side.CLIENT)
     protected double velocityZ;
-    /**
-     * The pet that is riding this entity
-     */
-    public EntityTameable riddenByPet;
 
     public EntityNKBoat(World world) {
         super(world);
@@ -118,7 +113,7 @@ public abstract class EntityNKBoat extends Entity {
                 EntityPlayer player = (EntityPlayer) damageSource.getEntity();
                 byte emptySlot = getPlayerEmptySlot(player.inventory.mainInventory);
                 if (emptySlot != -1) {
-                    player.inventory.setInventorySlotContents(emptySlot, new ItemStack(mod_LavaBoat.lavaBoat, 1, itemDamage));
+                    player.inventory.setInventorySlotContents(emptySlot, new ItemStack(ModLavaBoat.lavaBoat, 1, itemDamage));
                     this.setDead();
                 }
             } else {
@@ -128,17 +123,9 @@ public abstract class EntityNKBoat extends Entity {
                 this.setBeenAttacked();
 
                 if (this.getDamageTaken() > 200) {
-                    if (this.riddenByEntity != null) {
-                        this.riddenByEntity.mountEntity(this);
-                    }
-
-                    this.entityDropItem(new ItemStack(mod_LavaBoat.lavaBoat, 1, itemDamage), 0);
-
+                    this.entityDropItem(new ItemStack(ModLavaBoat.lavaBoat, 1, itemDamage), 0);
                     this.setDead();
                 }
-            }
-            if (this.isDead && this.riddenByPet != null) {
-                unMountPet();
             }
 
             return true;
@@ -150,7 +137,7 @@ public abstract class EntityNKBoat extends Entity {
     /*
      * return empty slot number
      */
-    private static byte getPlayerEmptySlot(ItemStack[] items) {
+    protected static byte getPlayerEmptySlot(ItemStack[] items) {
         for (byte i = 0; i < items.length; i++) {
             if (items[i] == null) {
                 return i;
@@ -511,30 +498,30 @@ public abstract class EntityNKBoat extends Entity {
                     }
                 }
 
-                // remove snow and waterlily
-                if (material.equals(Material.water)) {
-                    for (i = 0; i < 4; i++) {
-                        int x = MathHelper.floor_double(this.posX + (i % 2 - 0.5) * 0.8);
-                        int z = MathHelper.floor_double(this.posZ + (i / 2 - 0.5) * 0.8);
+                // remove waterlily
+                if (material == Material.water) {
+                    int y = MathHelper.floor_double(this.posY);
 
-                        for (int j = 0; j < 2; j++) {
-                            int y = MathHelper.floor_double(this.posY) + j;
+                    int minX = MathHelper.floor_double(this.boundingBox.minX - 0.2);
+                    int minZ = MathHelper.floor_double(this.boundingBox.minZ - 0.2);
+                    int maxX = MathHelper.floor_double(this.boundingBox.maxX + 0.2);
+                    int maxZ = MathHelper.floor_double(this.boundingBox.maxZ + 0.2);
+
+                    for (int x = minX; x <= maxX; x++) {
+                        for (int z = minZ; z <= maxZ; z++) {
                             int blockId = this.worldObj.getBlockId(x, y, z);
 
-                            if (blockId == Block.snow.blockID) {
-                                this.worldObj.setBlockToAir(x, y, z);
-                            } else if (blockId == Block.waterlily.blockID) {
-                                this.worldObj.destroyBlock(x, y, z, true);
+                            if (blockId == Block.waterlily.blockID) {
+                                Block.waterlily.dropBlockAsItem(this.worldObj, x, y, z, 0, 0);
+                                this.worldObj.setBlock(x, y, z, 0, 0, 2);
                             }
                         }
                     }
+
                 }
 
                 if (this.riddenByEntity != null && this.riddenByEntity.isDead) {
                     this.riddenByEntity = null;
-                }
-                if (this.riddenByPet != null && this.riddenByPet.isDead) {
-                    this.riddenByPet = null;
                 }
             }
         }
@@ -547,7 +534,7 @@ public abstract class EntityNKBoat extends Entity {
     @Override
     protected void doBlockCollisions() {
         int minX = MathHelper.floor_double(this.boundingBox.minX + 0.001);
-        int minY = MathHelper.floor_double(this.boundingBox.minY - 1.001);
+        int minY = MathHelper.floor_double(this.boundingBox.minY + 0.001);
         int minZ = MathHelper.floor_double(this.boundingBox.minZ + 0.001);
         int maxX = MathHelper.floor_double(this.boundingBox.maxX - 0.001);
         int maxY = MathHelper.floor_double(this.boundingBox.maxY - 0.001);
@@ -558,7 +545,6 @@ public abstract class EntityNKBoat extends Entity {
                 for (int y = minY; y <= maxY; y++) {
                     for (int z = minZ; z <= maxZ; z++) {
                         int blockId = this.worldObj.getBlockId(x, y, z);
-
                         if (blockId > 0) {
                             Block.blocksList[blockId].onEntityCollidedWithBlock(this.worldObj, x, y, z, this);
                         }
@@ -571,18 +557,8 @@ public abstract class EntityNKBoat extends Entity {
     /**
      * Return whether this entity should be rendered as on fire.
      */
+    @Override
     public boolean canRenderOnFire() {
         return false;
-    }
-
-    /*
-     * Unmount pet frm boat
-     */
-    protected void unMountPet() {
-        this.riddenByPet.setSitting(false);
-        this.riddenByPet.ridingEntity = null;
-        this.riddenByPet.unmountEntity(this);
-        this.riddenByPet.setSitting(false);
-        this.riddenByPet = null;
     }
 }

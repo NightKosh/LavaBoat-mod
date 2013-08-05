@@ -1,5 +1,6 @@
 package LavaBoat.item;
 
+import LavaBoat.Resources;
 import LavaBoat.entity.EntityDoubleLavaBoat;
 import LavaBoat.entity.EntityDoubleReinforcedBoat;
 import LavaBoat.entity.EntityLavaBoat;
@@ -32,13 +33,14 @@ import net.minecraft.world.World;
 public class ItemLavaBoat extends Item {
 
     public static final String[] NAMES = new String[]{
-        "Reinforced boat", "Large reinforced boat",
-        "Lava boat", "Large lava boat"
+        "Reinforced boat", "Large reinforced boat", "Cargo boat",
+        "Lava boat", "Large lava boat", "Cargo lava boat"
     };
     public static final String[] ICONS_PATH = new String[]{
-        "LavaBoat:reinforcedBoat", "LavaBoat:doubleReinforcedBoat",
-        "LavaBoat:lavaBoat", "LavaBoat:doubleLavaBoat"
+        Resources.REINFORCED_BOAT, Resources.DOUBLE_REINFORCED_BOAT, Resources.CARGO_BOAT,
+        Resources.LAVA_BOAT, Resources.DOUBLE_LAVA_BOAT, Resources.CARGO_LAVA_BOAT
     };
+    
     @SideOnly(Side.CLIENT)
     private Icon[] icons;
 
@@ -110,17 +112,17 @@ public class ItemLavaBoat extends Item {
                     EntityNKBoat NKboat;
                     switch (itemStack.getItemDamage()) {
                         case 1:
-                            NKboat = new EntityDoubleReinforcedBoat(world, x + 0.5, y + 1, z + 0.5);
-                            break;
-                        case 2:
-                            NKboat = new EntityLavaBoat(world, x + 0.5F, y + 1, z + 0.5);
+                            NKboat = new EntityDoubleReinforcedBoat(world, x, y, z);
                             break;
                         case 3:
-                            NKboat = new EntityDoubleLavaBoat(world, x + 0.5, y + 1, z + 0.5);
+                            NKboat = new EntityLavaBoat(world, x, y, z);
+                            break;
+                        case 4:
+                            NKboat = new EntityDoubleLavaBoat(world, x, y, z);
                             break;
                         case 0:
                         default:
-                            NKboat = new EntityReinforcedBoat(world, x + 0.5, y + 1, z + 0.5);
+                            NKboat = new EntityReinforcedBoat(world, x, y, z);
                             break;
                     }
 
@@ -150,9 +152,10 @@ public class ItemLavaBoat extends Item {
      */
     @SideOnly(Side.CLIENT)
     @Override
-    public void getSubItems(int par1, CreativeTabs tab, List list) {
-        for (int j = 0; j < NAMES.length; j++) {
-            list.add(new ItemStack(par1, 1, j));
+    public void getSubItems(int id, CreativeTabs tab, List list) {
+        for (int i = 0; i < NAMES.length; i++) {
+            if (i == 0 || i == 3) //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            list.add(new ItemStack(id, 1, i));
         }
     }
 
@@ -202,6 +205,7 @@ public class ItemLavaBoat extends Item {
         this.icons = new Icon[ICONS_PATH.length];
 
         for (int i = 0; i < ICONS_PATH.length; i++) {
+            if (i == 0 || i == 3) //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             this.icons[i] = register.registerIcon(ICONS_PATH[i]);
         }
     }

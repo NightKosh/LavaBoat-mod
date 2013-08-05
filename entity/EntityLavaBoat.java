@@ -19,7 +19,7 @@ public class EntityLavaBoat extends EntityNKBoat {
 
     public EntityLavaBoat(World world, double x, double y, double z) {
         this(world);
-        this.setPosition(x, y + this.yOffset, z);
+        this.setPosition(x + 0.5, y + this.yOffset + 1, z + 0.5);
         this.motionX = 0;
         this.motionY = 0;
         this.motionZ = 0;
@@ -42,7 +42,7 @@ public class EntityLavaBoat extends EntityNKBoat {
      */
     @Override
     public boolean attackEntityFrom(DamageSource damageSource, int par2) {
-        return attackEntityFrom(damageSource, 2, par2);
+        return attackEntityFrom(damageSource, 3, par2);
     }
 
     /**

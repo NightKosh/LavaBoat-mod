@@ -19,13 +19,15 @@ public class EntityDoubleReinforcedBoat extends EntityDoubleBoat {
 
     public EntityDoubleReinforcedBoat(World world, double x, double y, double z) {
         this(world);
-        this.setPosition(x, y + this.yOffset, z);
+        this.setPosition(x + 0.5, y + this.yOffset + 1, z + 0.5);
         this.motionX = 0;
         this.motionY = 0;
         this.motionZ = 0;
         this.prevPosX = x;
         this.prevPosY = y;
         this.prevPosZ = z;
+        
+        this.petSeat.setStartParams(x, y, z);
     }
 
     /**
