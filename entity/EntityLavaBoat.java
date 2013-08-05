@@ -1,6 +1,9 @@
 package LavaBoat.entity;
 
 import net.minecraft.block.material.Material;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.potion.Potion;
+import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.DamageSource;
 import net.minecraft.world.World;
 
@@ -53,5 +56,14 @@ public class EntityLavaBoat extends EntityNKBoat {
         super.onUpdate();
         
         onUpdate(Material.lava, -0.05, "lava");
+    }
+
+    @Override
+    public void onCollideWithPlayer(EntityPlayer player) {
+        if (this.riddenByEntity != null && this.riddenByEntity == player) {
+            PotionEffect effect = new PotionEffect(Potion.fireResistance.getId(), 300);
+            player.addPotionEffect(effect);
+        }
+        super.onCollideWithPlayer(player);
     }
 }
