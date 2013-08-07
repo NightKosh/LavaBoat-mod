@@ -74,7 +74,7 @@ public class ItemLavaBoat extends Item {
         float f8 = f3 * f5;
         double d3 = 5;
         Vec3 vec31 = positionVec.addVector(f7 * d3, f6 * d3, f8 * d3);
-        MovingObjectPosition objectPosition = world.rayTraceBlocks_do(positionVec, vec31, true);
+        MovingObjectPosition objectPosition = world.clip(positionVec, vec31, true);
 
         if (objectPosition == null) {
             return itemStack;

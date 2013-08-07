@@ -82,7 +82,7 @@ public abstract class EntityDoubleBoat extends EntityNKBoat {
      * gets into the saddle on a pig.
      */
     @Override
-    public boolean interact(EntityPlayer player) {
+    public boolean func_130002_c(EntityPlayer player) {
         if (!this.worldObj.isRemote) {
             if (this.riddenByEntity == null) {
                 System.out.println("interact");
@@ -152,7 +152,7 @@ public abstract class EntityDoubleBoat extends EntityNKBoat {
      * Called when the entity is attacked.
      */
     @Override
-    public boolean attackEntityFrom(DamageSource damageSource, int itemDamage, int par2) {
+    public boolean attackEntityFrom(DamageSource damageSource, int itemDamage, float par2) {
         if (this.isEntityInvulnerable()) {
             return false;
         } else if (!this.worldObj.isRemote && !this.isDead) {
@@ -166,7 +166,7 @@ public abstract class EntityDoubleBoat extends EntityNKBoat {
             } else {
                 this.setForwardDirection(-this.getForwardDirection());
                 this.setTimeSinceHit(10);
-                this.setDamageTaken(this.getDamageTaken() + par2 * 10);
+                this.setDamageTaken((int) (this.getDamageTaken() + par2 * 10));
                 this.setBeenAttacked();
 
                 if (this.getDamageTaken() > 200) {

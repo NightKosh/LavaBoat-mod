@@ -1,6 +1,8 @@
 
 package LavaBoat;
 
+import net.minecraft.util.ResourceLocation;
+
 /*
  * LavaBoat mod
  *
@@ -13,7 +15,8 @@ public class Resources {
         
     }
     
-    private static final String MOD_ID = ModInfo.ID;//.toLowerCase();
+    private static final String MOD_ID = ModInfo.ID.toLowerCase();
+    private static final String MODEL_LOCATION = MOD_ID + ":textures/models/";
     
     // items
     public static final String REINFORCED_BOAT        = MOD_ID + ":reinforcedBoat";
@@ -24,10 +27,10 @@ public class Resources {
     public static final String CARGO_LAVA_BOAT        = MOD_ID + ":cargoLavaBoat";
     
     // models
-    public static final String MODEL_REINFORCES_BOAT        = "/mods/LavaBoat/textures/ReinforcedBoat.png";
-    public static final String MODEL_DOUBLE_REINFORCED_BOAT = "/mods/LavaBoat/textures/ReinforcedDoubleBoat.png";
-    public static final String MODEL_CARGO_REINFORCED_BOAT  = "/mods/LavaBoat/textures/ReinforcedDoubleBoat.png";
-    public static final String MODEL_LAVA_BOAT              = "/mods/LavaBoat/textures/LavaBoat.png";
-    public static final String MODEL_DOUBLE_LAVA_BOAT       = "/mods/LavaBoat/textures/DoubleLavaBoat.png";
-    public static final String MODEL_CARGO_LAVA_BOAT        = "/mods/LavaBoat/textures/DoubleLavaBoat.png";
+    public static final ResourceLocation MODEL_REINFORCES_BOAT        = new ResourceLocation(MODEL_LOCATION + "ReinforcedBoat.png");
+    public static final ResourceLocation MODEL_DOUBLE_REINFORCED_BOAT = new ResourceLocation(MODEL_LOCATION + "ReinforcedBoat.png");
+    public static final ResourceLocation MODEL_CARGO_REINFORCED_BOAT  = new ResourceLocation(MODEL_LOCATION + "ReinforcedDoubleBoat.png");
+    public static final ResourceLocation MODEL_LAVA_BOAT              = new ResourceLocation(MODEL_LOCATION + "LavaBoat.png");
+    public static final ResourceLocation MODEL_DOUBLE_LAVA_BOAT       = new ResourceLocation(MODEL_LOCATION + "DoubleLavaBoat.png");
+    public static final ResourceLocation MODEL_CARGO_LAVA_BOAT        = new ResourceLocation(MODEL_LOCATION + "DoubleLavaBoat.png");
 }

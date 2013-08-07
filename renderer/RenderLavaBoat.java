@@ -10,6 +10,7 @@ import net.minecraft.client.model.ModelBoat;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.MathHelper;
+import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 
 /*
@@ -89,23 +90,28 @@ public class RenderLavaBoat extends Render {
     private void getTexture() {
         switch (boatType) {
             case 0:
-                this.loadTexture(Resources.MODEL_REINFORCES_BOAT);
+                this.func_110776_a(Resources.MODEL_REINFORCES_BOAT);
                 break;
             case 1:
-                this.loadTexture(Resources.MODEL_DOUBLE_REINFORCED_BOAT);
+                this.func_110776_a(Resources.MODEL_DOUBLE_REINFORCED_BOAT);
                 break;
             case 2:
-                this.loadTexture(Resources.MODEL_CARGO_REINFORCED_BOAT);
+                this.func_110776_a(Resources.MODEL_CARGO_REINFORCED_BOAT);
                 break;
             case 3:
-                this.loadTexture(Resources.MODEL_LAVA_BOAT);
+                this.func_110776_a(Resources.MODEL_LAVA_BOAT);
                 break;
             case 4:
-                this.loadTexture(Resources.MODEL_DOUBLE_LAVA_BOAT);
+                this.func_110776_a(Resources.MODEL_DOUBLE_LAVA_BOAT);
                 break;
             case 5:
-                this.loadTexture(Resources.MODEL_CARGO_LAVA_BOAT);
+                this.func_110776_a(Resources.MODEL_CARGO_LAVA_BOAT);
                 break;
         }
+    }
+
+    @Override
+    protected ResourceLocation func_110775_a(Entity entity) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

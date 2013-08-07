@@ -31,7 +31,7 @@ public class EntityReinforcedBoat extends EntityNKBoat {
      * Called when the entity is attacked.
      */
     @Override
-    public boolean attackEntityFrom(DamageSource damageSource, int par2) {
+    public boolean attackEntityFrom(DamageSource damageSource, float par2) {
         return attackEntityFrom(damageSource, 0, par2);
     }
 

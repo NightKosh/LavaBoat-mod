@@ -9,6 +9,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -105,7 +106,7 @@ public abstract class EntityNKBoat extends Entity {
     /**
      * Called when the entity is attacked.
      */
-    public boolean attackEntityFrom(DamageSource damageSource, int itemDamage, int par2) {
+    public boolean attackEntityFrom(DamageSource damageSource, int itemDamage, float par2) {
         if (this.isEntityInvulnerable()) {
             return false;
         } else if (!this.worldObj.isRemote && !this.isDead) {
@@ -119,7 +120,7 @@ public abstract class EntityNKBoat extends Entity {
             } else {
                 this.setForwardDirection(-this.getForwardDirection());
                 this.setTimeSinceHit(10);
-                this.setDamageTaken(this.getDamageTaken() + par2 * 10);
+                this.setDamageTaken((int) (this.getDamageTaken() + par2 * 10));
                 this.setBeenAttacked();
 
                 if (this.getDamageTaken() > 200) {
@@ -249,7 +250,7 @@ public abstract class EntityNKBoat extends Entity {
      * gets into the saddle on a pig.
      */
     @Override
-    public boolean interact(EntityPlayer player) {
+    public boolean func_130002_c(EntityPlayer player) {
         if (this.riddenByEntity != null && this.riddenByEntity instanceof EntityPlayer && this.riddenByEntity != player) {
         } else if (!this.worldObj.isRemote) {
             player.mountEntity(this);
@@ -420,9 +421,15 @@ public abstract class EntityNKBoat extends Entity {
                 this.motionY += 0.007;
             }
 
-            if (this.riddenByEntity != null) {
-                this.motionX += this.riddenByEntity.motionX * this.speedMultiplier;
-                this.motionZ += this.riddenByEntity.motionZ * this.speedMultiplier;
+            if (this.riddenByEntity != null && this.riddenByEntity instanceof EntityLivingBase) {
+                double d4 = (double) ((EntityLivingBase) this.riddenByEntity).moveForward;
+
+                if (d4 > 0.0D) {
+                    double d5 = -Math.sin((double) (this.riddenByEntity.rotationYaw * (float) Math.PI / 180.0F));
+                    double d11 = Math.cos((double) (this.riddenByEntity.rotationYaw * (float) Math.PI / 180.0F));
+                    this.motionX += d5 * this.speedMultiplier * 0.05000000074505806D;
+                    this.motionZ += d11 * this.speedMultiplier * 0.05000000074505806D;
+                }
             }
 
             double newMotion = Math.sqrt(this.motionX * this.motionX + this.motionZ * this.motionZ);

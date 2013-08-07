@@ -119,7 +119,7 @@ public class EntityPetBoat extends Entity {
     }
 
     @Override
-    public boolean attackEntityFrom(DamageSource damagesource, int i) {
+    public boolean attackEntityFrom(DamageSource damagesource, float i) {
         return false;
     }
 
@@ -183,6 +183,6 @@ public class EntityPetBoat extends Entity {
     
     protected void unmountPet() {
         ((EntityTameable) this.riddenByEntity).setSitting(false);
-        this.riddenByEntity.unmountEntity(this);
+        //this.riddenByEntity.unmountEntity(this);
     }
 }
