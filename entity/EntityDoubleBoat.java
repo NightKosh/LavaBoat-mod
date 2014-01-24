@@ -82,7 +82,7 @@ public abstract class EntityDoubleBoat extends EntityNKBoat {
      * gets into the saddle on a pig.
      */
     @Override
-    public boolean func_130002_c(EntityPlayer player) {
+    public boolean interactFirst(EntityPlayer player) {
         if (!this.worldObj.isRemote) {
             if (this.riddenByEntity == null) {
                 System.out.println("interact");

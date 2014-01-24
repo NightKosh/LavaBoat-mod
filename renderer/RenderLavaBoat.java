@@ -88,30 +88,25 @@ public class RenderLavaBoat extends Render {
     }
 
     private void getTexture() {
-        switch (boatType) {
-            case 0:
-                this.func_110776_a(Resources.MODEL_REINFORCES_BOAT);
-                break;
-            case 1:
-                this.func_110776_a(Resources.MODEL_DOUBLE_REINFORCED_BOAT);
-                break;
-            case 2:
-                this.func_110776_a(Resources.MODEL_CARGO_REINFORCED_BOAT);
-                break;
-            case 3:
-                this.func_110776_a(Resources.MODEL_LAVA_BOAT);
-                break;
-            case 4:
-                this.func_110776_a(Resources.MODEL_DOUBLE_LAVA_BOAT);
-                break;
-            case 5:
-                this.func_110776_a(Resources.MODEL_CARGO_LAVA_BOAT);
-                break;
-        }
+        bindTexture(getEntityTexture(null));
     }
 
     @Override
-    protected ResourceLocation func_110775_a(Entity entity) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    protected ResourceLocation getEntityTexture(Entity entity) {
+        switch (boatType) {
+            case 1:
+                return Resources.MODEL_DOUBLE_REINFORCED_BOAT;
+            case 2:
+                return Resources.MODEL_CARGO_REINFORCED_BOAT;
+            case 3:
+                return Resources.MODEL_LAVA_BOAT;
+            case 4:
+                return Resources.MODEL_DOUBLE_LAVA_BOAT;
+            case 5:
+                return Resources.MODEL_CARGO_LAVA_BOAT;
+            case 0:
+            default:
+                return Resources.MODEL_REINFORCES_BOAT;
+        }
     }
 }

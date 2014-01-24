@@ -10,13 +10,18 @@ import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.monster.IMob;
+import net.minecraft.entity.passive.EntityTameable;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.packet.Packet39AttachEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
 
 /*
  * LavaBoat mod
@@ -42,6 +47,10 @@ public abstract class EntityNKBoat extends Entity {
     protected double velocityY;
     @SideOnly(Side.CLIENT)
     protected double velocityZ;
+    
+    
+    private boolean field_110169_bv;
+    private Entity field_110168_bw;
 
     public EntityNKBoat(World world) {
         super(world);
@@ -250,13 +259,34 @@ public abstract class EntityNKBoat extends Entity {
      * gets into the saddle on a pig.
      */
     @Override
-    public boolean func_130002_c(EntityPlayer player) {
+    public boolean interactFirst(EntityPlayer player) {
         if (this.riddenByEntity != null && this.riddenByEntity instanceof EntityPlayer && this.riddenByEntity != player) {
         } else if (!this.worldObj.isRemote) {
-            player.mountEntity(this);
+            ItemStack itemstack = player.inventory.getCurrentItem();
+
+            if (itemstack != null && itemstack.itemID == Item.leash.itemID && this.func_110164_bC()) {
+                this.func_110162_b(player, true);
+                --itemstack.stackSize;
+                return true;
+            } else {
+                player.mountEntity(this);
+            }
         }
 
         return true;
+    }
+
+    public boolean func_110164_bC() {
+        return this.field_110169_bv;
+    }
+
+    public void func_110162_b(Entity entity, boolean par2) {
+        this.field_110169_bv = true;
+        this.field_110168_bw = entity;
+
+        if (!this.worldObj.isRemote && par2 && this.worldObj instanceof WorldServer) {
+            ((WorldServer) this.worldObj).getEntityTracker().sendPacketToAllPlayersTrackingEntity(this, new Packet39AttachEntity(1, this, this.field_110168_bw));
+        }
     }
 
     /**
