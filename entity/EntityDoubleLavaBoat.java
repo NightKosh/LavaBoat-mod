@@ -1,4 +1,3 @@
-
 package LavaBoat.entity;
 
 import net.minecraft.block.material.Material;
@@ -27,7 +26,7 @@ public class EntityDoubleLavaBoat extends EntityDoubleBoat {
         this.prevPosX = x;
         this.prevPosY = y;
         this.prevPosZ = z;
-        
+
         this.petSeat.setStartParams(x, y, z);
     }
 
@@ -54,7 +53,7 @@ public class EntityDoubleLavaBoat extends EntityDoubleBoat {
     @Override
     public void onUpdate() {
         super.onUpdate();
-        
+
         onUpdate(Material.lava, -0.4, "lava");
     }
 }

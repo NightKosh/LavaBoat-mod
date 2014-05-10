@@ -1,15 +1,15 @@
 package LavaBoat.entity;
 
 import LavaBoat.ModLavaBoat;
-import java.util.Random;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.EnumEntitySize;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.DamageSource;
 import net.minecraft.world.World;
+
+import java.util.Random;
 
 /*
  * LavaBoat mod
@@ -93,8 +93,8 @@ public abstract class EntityDoubleBoat extends EntityNKBoat {
                     petSeat.findAndMountPet();
                 }
             } else if (this.petSeat.riddenByEntity != null) {
-                
-                    System.out.println("unmount");
+
+                System.out.println("unmount");
                 petSeat.unmountPet();
             }
         }

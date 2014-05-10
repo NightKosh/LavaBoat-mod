@@ -1,7 +1,5 @@
 package LavaBoat.entity;
 
-import java.util.Iterator;
-import java.util.List;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.passive.EntityOcelot;
 import net.minecraft.entity.passive.EntityTameable;
@@ -10,6 +8,9 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.DamageSource;
 import net.minecraft.world.World;
+
+import java.util.Iterator;
+import java.util.List;
 
 /*
  * LavaBoat mod
@@ -34,12 +35,12 @@ public class EntityPetBoat extends Entity {
         this.boat = boat;
     }
 
-    protected void setStartParams(double x, double y, double z) {        
+    protected void setStartParams(double x, double y, double z) {
         this.setPosition(x, y + this.yOffset, z);
         this.motionX = 0;
         this.motionY = 0;
         this.motionZ = 0;
-        
+
         this.prevPosX = x;
         this.prevPosY = y;
         this.prevPosZ = z;
@@ -49,11 +50,11 @@ public class EntityPetBoat extends Entity {
     @Override
     public void onUpdate() {
         super.onUpdate();
-        
+
         if (this.riddenByEntity != null && this.riddenByEntity.isDead) {
             this.riddenByEntity = null;
         }
-        
+
         if (boat == null || boat.isDead) {
             if (this.riddenByEntity != null) {
                 unmountPet();
@@ -70,7 +71,7 @@ public class EntityPetBoat extends Entity {
         prevPosX = posX;
         prevPosY = posY;
         prevPosZ = posZ;
-        
+
         this.setRotation(this.boat.rotationYaw, this.boat.rotationPitch);
         this.setPosition(this.boat.posX, this.boat.posY, this.boat.posZ);
     }
@@ -156,10 +157,10 @@ public class EntityPetBoat extends Entity {
             this.mountPet(mountArea, EntityOcelot.class);
         }
     }
+
     /*
      * Mount pet to boat
      */
-
     private boolean mountPet(AxisAlignedBB petArea, Class petClass) {
         List<EntityTameable> petsList = this.worldObj.getEntitiesWithinAABB(petClass, petArea);
 
@@ -169,7 +170,7 @@ public class EntityPetBoat extends Entity {
             while (it.hasNext()) {
                 pet = it.next();
                 if (pet != null && pet.isTamed() && pet.getOwner() != null && pet.getOwner().equals(this.boat.riddenByEntity) && pet.ridingEntity == null) {
-                    System.out.println("Mount pet " + pet.getEntityName());
+                    System.out.println("Mount pet " + pet.getCommandSenderName());
                     pet.setSitting(true);
                     pet.mountEntity(this);
 
@@ -180,7 +181,7 @@ public class EntityPetBoat extends Entity {
 
         return false;
     }
-    
+
     protected void unmountPet() {
         ((EntityTameable) this.riddenByEntity).setSitting(false);
         //this.riddenByEntity.unmountEntity(this);

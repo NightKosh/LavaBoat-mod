@@ -1,28 +1,20 @@
 package LavaBoat.item;
 
 import LavaBoat.Resources;
-import LavaBoat.entity.EntityDoubleLavaBoat;
-import LavaBoat.entity.EntityDoubleReinforcedBoat;
-import LavaBoat.entity.EntityLavaBoat;
-import LavaBoat.entity.EntityNKBoat;
-import LavaBoat.entity.EntityReinforcedBoat;
+import LavaBoat.entity.*;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import java.util.List;
-import net.minecraft.block.Block;
-import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.EnumMovingObjectType;
-import net.minecraft.util.Icon;
-import net.minecraft.util.MathHelper;
-import net.minecraft.util.MovingObjectPosition;
-import net.minecraft.util.Vec3;
+import net.minecraft.util.*;
 import net.minecraft.world.World;
+
+import java.util.List;
 
 /*
  * LavaBoat mod
@@ -33,19 +25,19 @@ import net.minecraft.world.World;
 public class ItemLavaBoat extends Item {
 
     public static final String[] NAMES = new String[]{
-        "Reinforced boat", "Large reinforced boat", "Cargo boat",
-        "Lava boat", "Large lava boat", "Cargo lava boat"
+            "Reinforced boat", "Large reinforced boat", "Cargo boat",
+            "Lava boat", "Large lava boat", "Cargo lava boat"
     };
     public static final String[] ICONS_PATH = new String[]{
-        Resources.REINFORCED_BOAT, Resources.DOUBLE_REINFORCED_BOAT, Resources.CARGO_BOAT,
-        Resources.LAVA_BOAT, Resources.DOUBLE_LAVA_BOAT, Resources.CARGO_LAVA_BOAT
+            Resources.REINFORCED_BOAT, Resources.DOUBLE_REINFORCED_BOAT, Resources.CARGO_BOAT,
+            Resources.LAVA_BOAT, Resources.DOUBLE_LAVA_BOAT, Resources.CARGO_LAVA_BOAT
     };
-    
-    @SideOnly(Side.CLIENT)
-    private Icon[] icons;
 
-    public ItemLavaBoat(int par1) {
-        super(par1);
+    @SideOnly(Side.CLIENT)
+    private IIcon[] icons;
+
+    public ItemLavaBoat() {
+        super();
         this.maxStackSize = 1;
         this.setCreativeTab(CreativeTabs.tabTransport);
         this.setMaxDamage(0);
@@ -74,7 +66,7 @@ public class ItemLavaBoat extends Item {
         float f8 = f3 * f5;
         double d3 = 5;
         Vec3 vec31 = positionVec.addVector(f7 * d3, f6 * d3, f8 * d3);
-        MovingObjectPosition objectPosition = world.clip(positionVec, vec31, true);
+        MovingObjectPosition objectPosition = world.rayTraceBlocks(positionVec, vec31, true);
 
         if (objectPosition == null) {
             return itemStack;
@@ -100,40 +92,40 @@ public class ItemLavaBoat extends Item {
             if (flag) {
                 return itemStack;
             } else {
-                if (objectPosition.typeOfHit == EnumMovingObjectType.TILE) {
+                if (objectPosition.typeOfHit == MovingObjectPosition.MovingObjectType.BLOCK) {
                     int x = objectPosition.blockX;
                     int y = objectPosition.blockY;
                     int z = objectPosition.blockZ;
 
-                    if (world.getBlockId(x, y, z) == Block.snow.blockID) {
+                    if (world.getBlock(x, y, z).equals(Blocks.snow_layer)) {
                         --y;
                     }
 
-                    EntityNKBoat NKboat;
+                    EntityNKBoat NKBoat;
                     switch (itemStack.getItemDamage()) {
                         case 1:
-                            NKboat = new EntityDoubleReinforcedBoat(world, x, y, z);
+                            NKBoat = new EntityDoubleReinforcedBoat(world, x, y, z);
                             break;
                         case 3:
-                            NKboat = new EntityLavaBoat(world, x, y, z);
+                            NKBoat = new EntityLavaBoat(world, x, y, z);
                             break;
                         case 4:
-                            NKboat = new EntityDoubleLavaBoat(world, x, y, z);
+                            NKBoat = new EntityDoubleLavaBoat(world, x, y, z);
                             break;
                         case 0:
                         default:
-                            NKboat = new EntityReinforcedBoat(world, x, y, z);
+                            NKBoat = new EntityReinforcedBoat(world, x, y, z);
                             break;
                     }
 
-                    NKboat.rotationYaw = (MathHelper.floor_double(player.rotationYaw * 4 / 360F + 0.5) & 3 - 1) * 90;
+                    NKBoat.rotationYaw = (MathHelper.floor_double(player.rotationYaw * 4 / 360F + 0.5) & 3 - 1) * 90;
 
-                    if (!world.getCollidingBoundingBoxes(NKboat, NKboat.boundingBox.expand(-0.1, -0.1, -0.1)).isEmpty()) {
+                    if (!world.getCollidingBoundingBoxes(NKBoat, NKBoat.boundingBox.expand(-0.1, -0.1, -0.1)).isEmpty()) {
                         return itemStack;
                     }
 
                     if (!world.isRemote) {
-                        world.spawnEntityInWorld(NKboat);
+                        world.spawnEntityInWorld(NKBoat);
                     }
 
                     if (!player.capabilities.isCreativeMode) {
@@ -150,12 +142,12 @@ public class ItemLavaBoat extends Item {
      * returns a list of items with the same ID, but different meta (eg: dye
      * returns 16 items)
      */
-    @SideOnly(Side.CLIENT)
     @Override
-    public void getSubItems(int id, CreativeTabs tab, List list) {
+    @SideOnly(Side.CLIENT)
+    public void getSubItems(Item item, CreativeTabs tab, List list) {
         for (int i = 0; i < NAMES.length; i++) {
             if (i == 0 || i == 3) //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            list.add(new ItemStack(id, 1, i));
+                list.add(new ItemStack(item, 1, i));
         }
     }
 
@@ -170,9 +162,9 @@ public class ItemLavaBoat extends Item {
     /**
      * Gets an icon index based on an item's damage value
      */
-    @SideOnly(Side.CLIENT)
     @Override
-    public Icon getIconFromDamage(int damage) {
+    @SideOnly(Side.CLIENT)
+    public IIcon getIconFromDamage(int damage) {
         if (damage < 0 || damage >= NAMES.length) {
             damage = 0;
         }
@@ -195,18 +187,14 @@ public class ItemLavaBoat extends Item {
         return NAMES[i];
     }
 
-    /**
-     *
-     * @param register
-     */
-    @SideOnly(Side.CLIENT)
     @Override
-    public void registerIcons(IconRegister register) {
-        this.icons = new Icon[ICONS_PATH.length];
+    @SideOnly(Side.CLIENT)
+    public void registerIcons(IIconRegister register) {
+        this.icons = new IIcon[ICONS_PATH.length];
 
         for (int i = 0; i < ICONS_PATH.length; i++) {
             if (i == 0 || i == 3) //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            this.icons[i] = register.registerIcon(ICONS_PATH[i]);
+                this.icons[i] = register.registerIcon(ICONS_PATH[i]);
         }
     }
 }

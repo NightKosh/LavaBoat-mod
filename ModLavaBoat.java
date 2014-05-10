@@ -1,26 +1,18 @@
 package LavaBoat;
 
-import LavaBoat.entity.EntityDoubleLavaBoat;
-import LavaBoat.entity.EntityDoubleReinforcedBoat;
-import LavaBoat.entity.EntityLavaBoat;
-import LavaBoat.entity.EntityPetBoat;
-import LavaBoat.entity.EntityReinforcedBoat;
+import LavaBoat.entity.*;
 import LavaBoat.item.ItemLavaBoat;
 import cpw.mods.fml.common.Mod;
-import cpw.mods.fml.common.Mod.Init;
 import cpw.mods.fml.common.Mod.Instance;
-import cpw.mods.fml.common.Mod.PreInit;
 import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
-import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import cpw.mods.fml.common.network.NetworkMod;
 import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.LanguageRegistry;
-import net.minecraft.block.Block;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.common.Configuration;
 
 /*
  * LavaBoat mod
@@ -29,7 +21,6 @@ import net.minecraftforge.common.Configuration;
  * @license Lesser GNU Public License v3 (http://www.gnu.org/licenses/lgpl.html)
  */
 @Mod(modid = ModInfo.ID, name = ModInfo.NAME, version = ModInfo.VERSION)
-@NetworkMod(clientSideRequired = true, serverSideRequired = false)
 public class ModLavaBoat {
 
     @Instance("LavaBoat")
@@ -44,20 +35,9 @@ public class ModLavaBoat {
         instance = this;
     }
 
-    @PreInit
-    public void preInit(FMLPreInitializationEvent event) {
-        Configuration config = new Configuration(event.getSuggestedConfigurationFile());
-
-        config.load();
-
-        lavaBoatId = config.getItem("LavaBoat", 9000 - 256).getInt();
-
-        config.save();
-    }
-
-    @Init
+    @Mod.EventHandler
     public void load(FMLInitializationEvent event) {
-        lavaBoat = new ItemLavaBoat(lavaBoatId);
+        lavaBoat = new ItemLavaBoat();
         GameRegistry.registerItem(lavaBoat, "Lava boat");
         for (byte i = 0; i < ItemLavaBoat.NAMES.length; i++) {
             if (i == 0 || i == 3) { //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -67,9 +47,9 @@ public class ModLavaBoat {
         }
 
         // recipe
-        GameRegistry.addRecipe(new ItemStack(lavaBoat, 1, 0), "xyx", "xxx", 'x', Item.ingotIron, 'y', Item.boat);
+        GameRegistry.addRecipe(new ItemStack(lavaBoat, 1, 0), "xyx", "xxx", 'x', Items.iron_ingot, 'y', Items.boat);
         //GameRegistry.addRecipe(new ItemStack(lavaBoat, 1, 1), "xx", 'x', new ItemStack(lavaBoat, 1, 0));
-        GameRegistry.addRecipe(new ItemStack(lavaBoat, 1, 3), "xyx", "xxx", 'x', Block.obsidian, 'y', new ItemStack(lavaBoat, 1, 0));
+        GameRegistry.addRecipe(new ItemStack(lavaBoat, 1, 3), "xyx", "xxx", 'x', Blocks.obsidian, 'y', new ItemStack(lavaBoat, 1, 0));
         //GameRegistry.addRecipe(new ItemStack(lavaBoat, 1, 4), "xx", 'x', new ItemStack(lavaBoat, 1, 2));
 
 

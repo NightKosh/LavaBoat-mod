@@ -3,25 +3,22 @@ package LavaBoat.entity;
 import LavaBoat.ModLavaBoat;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import java.util.List;
-import java.util.Random;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.monster.IMob;
-import net.minecraft.entity.passive.EntityTameable;
+import net.minecraft.entity.item.EntityBoat;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.Item;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.packet.Packet39AttachEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldServer;
+
+import java.util.List;
+import java.util.Random;
 
 /*
  * LavaBoat mod
@@ -29,11 +26,11 @@ import net.minecraft.world.WorldServer;
  * @author NightKosh
  * @license Lesser GNU Public License v3 (http://www.gnu.org/licenses/lgpl.html)
  */
-public abstract class EntityNKBoat extends Entity {
+public abstract class EntityNKBoat extends EntityBoat {
 
     public static final double MAX_VELOCITY = 0.5;
-    public float length;
-    protected boolean field_70279_a;
+    protected float length;
+    protected boolean isBoatEmpty;
     protected double speedMultiplier;
     protected int boatPosRotationIncrements;
     protected double boatX;
@@ -47,60 +44,11 @@ public abstract class EntityNKBoat extends Entity {
     protected double velocityY;
     @SideOnly(Side.CLIENT)
     protected double velocityZ;
-    
-    
-    private boolean field_110169_bv;
-    private Entity field_110168_bw;
+
 
     public EntityNKBoat(World world) {
         super(world);
         this.speedMultiplier = 0.1D;
-        this.preventEntitySpawning = true;
-        this.setSize(1.5F, 0.6F);
-        this.yOffset = this.height / 2.0F;
-    }
-
-    /**
-     * returns if this entity triggers Block.onEntityWalking on the blocks they
-     * walk on. used for spiders and wolves to prevent them from trampling crops
-     */
-    @Override
-    protected boolean canTriggerWalking() {
-        return false;
-    }
-
-    @Override
-    protected void entityInit() {
-        this.dataWatcher.addObject(17, new Integer(0));
-        this.dataWatcher.addObject(18, new Integer(1));
-        this.dataWatcher.addObject(19, new Integer(0));
-    }
-
-    /**
-     * Returns a boundingBox used to collide the entity with other entities and
-     * blocks. This enables the entity to be pushable on contact, like boats or
-     * minecarts.
-     */
-    @Override
-    public AxisAlignedBB getCollisionBox(Entity entity) {
-        return entity.boundingBox;
-    }
-
-    /**
-     * returns the bounding box for this entity
-     */
-    @Override
-    public AxisAlignedBB getBoundingBox() {
-        return this.boundingBox;
-    }
-
-    /**
-     * Returns true if this entity should push and be pushed by other entities
-     * when colliding.
-     */
-    @Override
-    public boolean canBePushed() {
-        return true;
     }
 
     /**
@@ -157,34 +105,13 @@ public abstract class EntityNKBoat extends Entity {
     }
 
     /**
-     * Setups the entity to do the hurt animation. Only used by packets in
-     * multiplayer.
-     */
-    @SideOnly(Side.CLIENT)
-    @Override
-    public void performHurtAnimation() {
-        this.setForwardDirection(-this.getForwardDirection());
-        this.setTimeSinceHit(10);
-        this.setDamageTaken(this.getDamageTaken() * 11);
-    }
-
-    /**
-     * Returns true if other Entities should be prevented from moving through
-     * this Entity.
-     */
-    @Override
-    public boolean canBeCollidedWith() {
-        return !this.isDead;
-    }
-
-    /**
      * Sets the position and rotation. Only difference from the other one is no
      * bounding on the rotation. Args: posX, posY, posZ, yaw, pitch
      */
-    @SideOnly(Side.CLIENT)
     @Override
+    @SideOnly(Side.CLIENT)
     public void setPositionAndRotation2(double posX, double posY, double posZ, float yaw, float pitch, int par9) {
-        if (this.field_70279_a) {
+        if (this.isBoatEmpty) {
             this.boatPosRotationIncrements = par9 + 15;
         } else {
             double deltaX = posX - this.posX;
@@ -210,135 +137,7 @@ public abstract class EntityNKBoat extends Entity {
     }
 
     /**
-     * Sets the velocity to the args. Args: x, y, z
-     */
-    @SideOnly(Side.CLIENT)
-    @Override
-    public void setVelocity(double x, double y, double z) {
-        this.velocityX = this.motionX = x;
-        this.velocityY = this.motionY = y;
-        this.velocityZ = this.motionZ = z;
-    }
-
-    @Override
-    public void updateRiderPosition() {
-        if (this.riddenByEntity != null) {
-            double xShift = Math.cos(this.rotationYaw * Math.PI / 180D) * 0.4;
-            double zShift = Math.sin(this.rotationYaw * Math.PI / 180D) * 0.4;
-            this.riddenByEntity.setPosition(this.posX + xShift, this.posY + this.getMountedYOffset() + this.riddenByEntity.getYOffset(), this.posZ + zShift);
-        }
-    }
-
-    /**
-     * Protected helper method to write subclass entity data to NBT.
-     */
-    @Override
-    protected void writeEntityToNBT(NBTTagCompound nbt) {
-    }
-
-    /**
-     * Protected helper method to read subclass entity data from NBT.
-     */
-    @Override
-    protected void readEntityFromNBT(NBTTagCompound nbt) {
-    }
-
-    /**
-     * Return shadow size
-     *
-     * @return float Shadow size
-     */
-    @SideOnly(Side.CLIENT)
-    @Override
-    public float getShadowSize() {
-        return 0F;
-    }
-
-    /**
-     * Called when a player interacts with a mob. e.g. gets milk from a cow,
-     * gets into the saddle on a pig.
-     */
-    @Override
-    public boolean interactFirst(EntityPlayer player) {
-        if (this.riddenByEntity != null && this.riddenByEntity instanceof EntityPlayer && this.riddenByEntity != player) {
-        } else if (!this.worldObj.isRemote) {
-            ItemStack itemstack = player.inventory.getCurrentItem();
-
-            if (itemstack != null && itemstack.itemID == Item.leash.itemID && this.func_110164_bC()) {
-                this.func_110162_b(player, true);
-                --itemstack.stackSize;
-                return true;
-            } else {
-                player.mountEntity(this);
-            }
-        }
-
-        return true;
-    }
-
-    public boolean func_110164_bC() {
-        return this.field_110169_bv;
-    }
-
-    public void func_110162_b(Entity entity, boolean par2) {
-        this.field_110169_bv = true;
-        this.field_110168_bw = entity;
-
-        if (!this.worldObj.isRemote && par2 && this.worldObj instanceof WorldServer) {
-            ((WorldServer) this.worldObj).getEntityTracker().sendPacketToAllPlayersTrackingEntity(this, new Packet39AttachEntity(1, this, this.field_110168_bw));
-        }
-    }
-
-    /**
-     * Sets the damage taken from the last hit.
-     */
-    public void setDamageTaken(int damage) {
-        this.dataWatcher.updateObject(19, Integer.valueOf(damage));
-    }
-
-    /**
-     * Gets the damage taken from the last hit.
-     */
-    public int getDamageTaken() {
-        return this.dataWatcher.getWatchableObjectInt(19);
-    }
-
-    /**
-     * Sets the time to count down from since the last time entity was hit.
-     */
-    public void setTimeSinceHit(int time) {
-        this.dataWatcher.updateObject(17, Integer.valueOf(time));
-    }
-
-    /**
-     * Gets the time since the last hit.
-     */
-    public int getTimeSinceHit() {
-        return this.dataWatcher.getWatchableObjectInt(17);
-    }
-
-    /**
-     * Sets the forward direction of the entity.
-     */
-    public void setForwardDirection(int direction) {
-        this.dataWatcher.updateObject(18, Integer.valueOf(direction));
-    }
-
-    /**
-     * Gets the forward direction of the entity.
-     */
-    public int getForwardDirection() {
-        return this.dataWatcher.getWatchableObjectInt(18);
-    }
-
-    @SideOnly(Side.CLIENT)
-    public void func_70270_d(boolean par1) {
-        this.field_70279_a = par1;
-    }
-
-    /**
-     * Applies a velocity to each of the entities pushing them away from each
-     * other. Args: entity
+     * Applies a velocity to each of the entities pushing them away from each other. Args: entity
      */
     @Override
     public void applyEntityCollision(Entity entity) {
@@ -366,9 +165,6 @@ public abstract class EntityNKBoat extends Entity {
         }
     }
 
-    /*
-     * Spawn splashes
-     */
     protected void spawnSplash(double d3, String particles) {
         if (d3 > 0.25) {
             double d4 = Math.cos(this.rotationYaw * Math.PI / 180D);
@@ -390,6 +186,14 @@ public abstract class EntityNKBoat extends Entity {
                 this.worldObj.spawnParticle(particles, splashX, this.posY - 0.125, splashZ, this.motionX, this.motionY, this.motionZ);
             }
         }
+    }
+
+    /**
+     * Called to update the entity's position/logic.
+     */
+    @Override
+    public void onUpdate() {
+        this.onEntityUpdate();
     }
 
     /**
@@ -419,7 +223,7 @@ public abstract class EntityNKBoat extends Entity {
         double motion = Math.sqrt(this.motionX * this.motionX + this.motionZ * this.motionZ);
         spawnSplash(motion, particles);
 
-        if (this.worldObj.isRemote && this.field_70279_a) {
+        if (this.worldObj.isRemote && this.isBoatEmpty) {
             if (this.boatPosRotationIncrements > 0) {
                 double x = this.posX + (this.boatX - this.posX) / this.boatPosRotationIncrements;
                 double y = this.posY + (this.boatY - this.posY) / this.boatPosRotationIncrements;
@@ -454,11 +258,11 @@ public abstract class EntityNKBoat extends Entity {
             if (this.riddenByEntity != null && this.riddenByEntity instanceof EntityLivingBase) {
                 double d4 = (double) ((EntityLivingBase) this.riddenByEntity).moveForward;
 
-                if (d4 > 0.0D) {
-                    double d5 = -Math.sin((double) (this.riddenByEntity.rotationYaw * (float) Math.PI / 180.0F));
-                    double d11 = Math.cos((double) (this.riddenByEntity.rotationYaw * (float) Math.PI / 180.0F));
-                    this.motionX += d5 * this.speedMultiplier * 0.05000000074505806D;
-                    this.motionZ += d11 * this.speedMultiplier * 0.05000000074505806D;
+                if (d4 > 0) {
+                    double d5 = -Math.sin((double) (this.riddenByEntity.rotationYaw * (float) Math.PI / 180F));
+                    double d11 = Math.cos((double) (this.riddenByEntity.rotationYaw * (float) Math.PI / 180F));
+                    this.motionX += d5 * this.speedMultiplier * 0.05D;
+                    this.motionZ += d11 * this.speedMultiplier * 0.05D;
                 }
             }
 
@@ -522,7 +326,7 @@ public abstract class EntityNKBoat extends Entity {
 
             // check for collisions with entities
             if (!this.worldObj.isRemote) {
-                List list = this.worldObj.getEntitiesWithinAABBExcludingEntity(this, this.boundingBox.expand(0.20000000298023224, 0, 0.20000000298023224));
+                List list = this.worldObj.getEntitiesWithinAABBExcludingEntity(this, this.boundingBox.expand(0.2, 0, 0.2));
                 int i;
 
                 if (list != null && !list.isEmpty()) {
@@ -546,11 +350,11 @@ public abstract class EntityNKBoat extends Entity {
 
                     for (int x = minX; x <= maxX; x++) {
                         for (int z = minZ; z <= maxZ; z++) {
-                            int blockId = this.worldObj.getBlockId(x, y, z);
+                            Block block = this.worldObj.getBlock(x, y, z);
 
-                            if (blockId == Block.waterlily.blockID) {
-                                Block.waterlily.dropBlockAsItem(this.worldObj, x, y, z, 0, 0);
-                                this.worldObj.setBlock(x, y, z, 0, 0, 2);
+                            if (block.equals(Blocks.waterlily)) {
+                                Blocks.waterlily.dropBlockAsItem(this.worldObj, x, y, z, 0, 0);
+                                this.worldObj.setBlock(x, y, z, Blocks.air, 0, 2);
                             }
                         }
                     }
@@ -559,33 +363,6 @@ public abstract class EntityNKBoat extends Entity {
 
                 if (this.riddenByEntity != null && this.riddenByEntity.isDead) {
                     this.riddenByEntity = null;
-                }
-            }
-        }
-    }
-
-    /**
-     * Checks for block collisions, and calls the associated onBlockCollided
-     * method for the collided block.
-     */
-    @Override
-    protected void doBlockCollisions() {
-        int minX = MathHelper.floor_double(this.boundingBox.minX + 0.001);
-        int minY = MathHelper.floor_double(this.boundingBox.minY + 0.001);
-        int minZ = MathHelper.floor_double(this.boundingBox.minZ + 0.001);
-        int maxX = MathHelper.floor_double(this.boundingBox.maxX - 0.001);
-        int maxY = MathHelper.floor_double(this.boundingBox.maxY - 0.001);
-        int maxZ = MathHelper.floor_double(this.boundingBox.maxZ - 0.001);
-
-        if (this.worldObj.checkChunksExist(minX, minY, minZ, maxX, maxY, maxZ)) {
-            for (int x = minX; x <= maxX; x++) {
-                for (int y = minY; y <= maxY; y++) {
-                    for (int z = minZ; z <= maxZ; z++) {
-                        int blockId = this.worldObj.getBlockId(x, y, z);
-                        if (blockId > 0) {
-                            Block.blocksList[blockId].onEntityCollidedWithBlock(this.worldObj, x, y, z, this);
-                        }
-                    }
                 }
             }
         }

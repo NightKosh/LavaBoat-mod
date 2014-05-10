@@ -42,6 +42,6 @@ public class EntityReinforcedBoat extends EntityNKBoat {
     public void onUpdate() {
         super.onUpdate();
         
-        onUpdate(Material.water, -0.05, "splash");
+        this.onUpdate(Material.water, -0.05, "splash");
     }
 }
