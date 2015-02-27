@@ -11,8 +11,6 @@ eclipse
 idea
 gradle
 build
-#api
-src/main/java/thaumcraft
 
 # Package Files #
 *.jar
