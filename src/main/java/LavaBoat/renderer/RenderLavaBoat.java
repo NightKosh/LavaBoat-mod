@@ -3,14 +3,15 @@ package LavaBoat.renderer;
 import LavaBoat.Resources;
 import LavaBoat.entity.EntityNKBoat;
 import LavaBoat.model.ModelDoubleBoat;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelBoat;
 import net.minecraft.client.renderer.entity.Render;
+import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
 
 /*
@@ -28,7 +29,8 @@ public class RenderLavaBoat extends Render {
     protected ModelBase modelBoat;
     private byte boatType;
 
-    public RenderLavaBoat(byte boatType) {
+    public RenderLavaBoat(RenderManager renderManager, byte boatType) {
+        super(renderManager);
         this.shadowSize = 0.5F;
         this.boatType = boatType;
         this.modelBoat = getBoatModel();
@@ -58,9 +60,9 @@ public class RenderLavaBoat extends Render {
 
         getTexture();
         GL11.glScalef(-1.0F, -1.0F, 1.0F);
-        
+
         if (boatType == 1 || boatType == 3) {
-                GL11.glRotatef(180, 0.0F, 1.0F, 0.0F);
+            GL11.glRotatef(180, 0.0F, 1.0F, 0.0F);
         }
         this.modelBoat.render(boat, 0.0F, 0.0F, -0.1F, 0.0F, 0.0F, 0.0625F);
         GL11.glPopMatrix();

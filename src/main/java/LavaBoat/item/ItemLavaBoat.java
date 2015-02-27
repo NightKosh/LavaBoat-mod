@@ -1,10 +1,6 @@
 package LavaBoat.item;
 
-import LavaBoat.Resources;
 import LavaBoat.entity.*;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -13,6 +9,8 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.*;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.List;
 
@@ -25,16 +23,9 @@ import java.util.List;
 public class ItemLavaBoat extends Item {
 
     public static final String[] NAMES = new String[]{
-            "Reinforced boat", "Large reinforced boat", "Cargo boat",
-            "Lava boat", "Large lava boat", "Cargo lava boat"
+            "reinforced_boat", "large_reinforced_boat", "cargo_reinforced_boat",
+            "lava_boat", "large_lava_boat", "cargo_lava_boat"
     };
-    public static final String[] ICONS_PATH = new String[]{
-            Resources.REINFORCED_BOAT, Resources.DOUBLE_REINFORCED_BOAT, Resources.CARGO_BOAT,
-            Resources.LAVA_BOAT, Resources.DOUBLE_LAVA_BOAT, Resources.CARGO_LAVA_BOAT
-    };
-
-    @SideOnly(Side.CLIENT)
-    private IIcon[] icons;
 
     public ItemLavaBoat() {
         super();
@@ -54,9 +45,9 @@ public class ItemLavaBoat extends Item {
         float f2 = player.prevRotationYaw + (player.rotationYaw - player.prevRotationYaw);
 
         double xPosition = player.prevPosX + player.posX - player.prevPosX;
-        double yPosition = player.prevPosY + player.posY - player.prevPosY + 1.62 - player.yOffset;
+        double yPosition = player.prevPosY + player.posY - player.prevPosY + 1.62 - player.getYOffset();
         double zPosition = player.prevPosZ + player.posZ - player.prevPosZ;
-        Vec3 positionVec = world.getWorldVec3Pool().getVecFromPool(xPosition, yPosition, zPosition);
+        Vec3 positionVec = new Vec3(xPosition, yPosition, zPosition);
 
         float f3 = MathHelper.cos(-f2 * 0.017453292F - (float) Math.PI);
         float f4 = MathHelper.sin(-f2 * 0.017453292F - (float) Math.PI);
@@ -74,14 +65,14 @@ public class ItemLavaBoat extends Item {
             Vec3 vec32 = player.getLook(1);
             boolean flag = false;
             float f9 = 1;
-            List list = world.getEntitiesWithinAABBExcludingEntity(player, player.boundingBox.addCoord(vec32.xCoord * d3, vec32.yCoord * d3, vec32.zCoord * d3).expand(f9, f9, f9));
+            List list = world.getEntitiesWithinAABBExcludingEntity(player, player.getEntityBoundingBox().addCoord(vec32.xCoord * d3, vec32.yCoord * d3, vec32.zCoord * d3).expand(f9, f9, f9));
 
             for (int i = 0; i < list.size(); i++) {
                 Entity entity = (Entity) list.get(i);
 
                 if (entity.canBeCollidedWith()) {
                     float collisionSize = entity.getCollisionBorderSize();
-                    AxisAlignedBB axisalignedbb = entity.boundingBox.expand(collisionSize, collisionSize, collisionSize);
+                    AxisAlignedBB axisalignedbb = entity.getEntityBoundingBox().expand(collisionSize, collisionSize, collisionSize);
 
                     if (axisalignedbb.isVecInside(positionVec)) {
                         flag = true;
@@ -93,11 +84,11 @@ public class ItemLavaBoat extends Item {
                 return itemStack;
             } else {
                 if (objectPosition.typeOfHit == MovingObjectPosition.MovingObjectType.BLOCK) {
-                    int x = objectPosition.blockX;
-                    int y = objectPosition.blockY;
-                    int z = objectPosition.blockZ;
+                    int x = objectPosition.getBlockPos().getX();
+                    int y = objectPosition.getBlockPos().getY();
+                    int z = objectPosition.getBlockPos().getZ();
 
-                    if (world.getBlock(x, y, z).equals(Blocks.snow_layer)) {
+                    if (world.getBlockState(new BlockPos(x, y, z)).getBlock().equals(Blocks.snow_layer)) {
                         --y;
                     }
 
@@ -120,7 +111,7 @@ public class ItemLavaBoat extends Item {
 
                     NKBoat.rotationYaw = (MathHelper.floor_double(player.rotationYaw * 4 / 360F + 0.5) & 3 - 1) * 90;
 
-                    if (!world.getCollidingBoundingBoxes(NKBoat, NKBoat.boundingBox.expand(-0.1, -0.1, -0.1)).isEmpty()) {
+                    if (!world.getCollidingBoundingBoxes(NKBoat, NKBoat.getEntityBoundingBox().expand(-0.1, -0.1, -0.1)).isEmpty()) {
                         return itemStack;
                     }
 
@@ -146,7 +137,7 @@ public class ItemLavaBoat extends Item {
     @SideOnly(Side.CLIENT)
     public void getSubItems(Item item, CreativeTabs tab, List list) {
         for (int i = 0; i < NAMES.length; i++) {
-            if (i == 0 || i == 3) //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            if (i == 0 || i == 3) //TODO
                 list.add(new ItemStack(item, 1, i));
         }
     }
@@ -157,19 +148,6 @@ public class ItemLavaBoat extends Item {
     @Override
     public int getMetadata(int metadata) {
         return metadata;
-    }
-
-    /**
-     * Gets an icon index based on an item's damage value
-     */
-    @Override
-    @SideOnly(Side.CLIENT)
-    public IIcon getIconFromDamage(int damage) {
-        if (damage < 0 || damage >= NAMES.length) {
-            damage = 0;
-        }
-
-        return this.icons[damage];
     }
 
     /**
@@ -184,17 +162,6 @@ public class ItemLavaBoat extends Item {
             i = 0;
         }
 
-        return NAMES[i];
-    }
-
-    @Override
-    @SideOnly(Side.CLIENT)
-    public void registerIcons(IIconRegister register) {
-        this.icons = new IIcon[ICONS_PATH.length];
-
-        for (int i = 0; i < ICONS_PATH.length; i++) {
-            if (i == 0 || i == 3) //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                this.icons[i] = register.registerIcon(ICONS_PATH[i]);
-        }
+        return "item." + NAMES[i];
     }
 }

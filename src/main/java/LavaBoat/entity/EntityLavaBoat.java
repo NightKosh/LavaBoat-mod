@@ -5,6 +5,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.world.World;
 
 /*
@@ -22,7 +23,7 @@ public class EntityLavaBoat extends EntityNKBoat {
 
     public EntityLavaBoat(World world, double x, double y, double z) {
         this(world);
-        this.setPosition(x + 0.5, y + this.yOffset + 1, z + 0.5);
+        this.setPosition(x + 0.5, y + this.getYOffset() + 1, z + 0.5);
         this.motionX = 0;
         this.motionY = 0;
         this.motionZ = 0;
@@ -54,8 +55,13 @@ public class EntityLavaBoat extends EntityNKBoat {
     @Override
     public void onUpdate() {
         super.onUpdate();
-        
-        onUpdate(Material.lava, -0.05, "lava");
+
+        onUpdate(Material.lava, -0.05);
+    }
+
+    @Override
+    protected EnumParticleTypes getParticles() {
+        return EnumParticleTypes.LAVA;
     }
 
     @Override
