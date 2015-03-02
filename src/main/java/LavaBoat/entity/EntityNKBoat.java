@@ -99,7 +99,7 @@ public abstract class EntityNKBoat extends EntityBoat {
     /*
      * return empty slot number
      */
-    protected static byte getPlayerEmptySlot(ItemStack[] items) {
+    public static byte getPlayerEmptySlot(ItemStack[] items) {
         for (byte i = 0; i < items.length; i++) {
             if (items[i] == null) {
                 return i;

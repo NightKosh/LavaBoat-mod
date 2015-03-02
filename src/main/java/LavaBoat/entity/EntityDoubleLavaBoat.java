@@ -26,8 +26,6 @@ public class EntityDoubleLavaBoat extends EntityDoubleBoat {
         this.prevPosX = x;
         this.prevPosY = y;
         this.prevPosZ = z;
-
-        this.petSeat.setStartParams(x, y, z);
     }
 
     /**
