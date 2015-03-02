@@ -26,7 +26,7 @@ import java.util.Random;
  */
 public abstract class EntityNKBoat extends EntityBoat {
 
-    public static final double MAX_VELOCITY = 0.5;
+    public static final double MAX_VELOCITY = 0.35;
     protected float length;
     protected boolean isBoatEmpty;
     protected double speedMultiplier;
@@ -46,7 +46,7 @@ public abstract class EntityNKBoat extends EntityBoat {
 
     public EntityNKBoat(World world) {
         super(world);
-        this.speedMultiplier = 0.1D;
+        this.speedMultiplier = 0.1;
     }
 
     @Override
@@ -96,8 +96,8 @@ public abstract class EntityNKBoat extends EntityBoat {
     }
 
     /*
-         * return empty slot number
-         */
+     * return empty slot number
+     */
     protected static byte getPlayerEmptySlot(ItemStack[] items) {
         for (byte i = 0; i < items.length; i++) {
             if (items[i] == null) {
@@ -197,12 +197,8 @@ public abstract class EntityNKBoat extends EntityBoat {
     @Override
     public void onUpdate() {
         this.onEntityUpdate();
-    }
+//        super.onUpdate();
 
-    /**
-     * Called to update the entity's position/logic.
-     */
-    protected void onUpdate(Material material, double yShift) {
         // decrease hit time
         if (this.getTimeSinceHit() > 0) {
             this.setTimeSinceHit(this.getTimeSinceHit() - 1);
@@ -217,9 +213,9 @@ public abstract class EntityNKBoat extends EntityBoat {
         this.prevPosZ = this.posZ;
 
         double shiftY = 0;
-        AxisAlignedBB axisalignedbb = AxisAlignedBB.fromBounds(this.getEntityBoundingBox().minX, this.getEntityBoundingBox().minY - yShift, this.getEntityBoundingBox().minZ,
-                this.getEntityBoundingBox().maxX, this.getEntityBoundingBox().minY - yShift, this.getEntityBoundingBox().maxZ);
-        if (this.worldObj.isAABBInMaterial(axisalignedbb, material)) {
+        AxisAlignedBB axisalignedbb = AxisAlignedBB.fromBounds(this.getEntityBoundingBox().minX, this.getEntityBoundingBox().minY - getYShift(), this.getEntityBoundingBox().minZ,
+                this.getEntityBoundingBox().maxX, this.getEntityBoundingBox().minY - getYShift(), this.getEntityBoundingBox().maxZ);
+        if (this.worldObj.isAABBInMaterial(axisalignedbb, getWaterMaterial())) {
             shiftY = 1;
         }
 
@@ -228,13 +224,13 @@ public abstract class EntityNKBoat extends EntityBoat {
 
         if (this.worldObj.isRemote && this.isBoatEmpty) {
             if (this.boatPosRotationIncrements > 0) {
-                double x = this.posX + (this.boatX - this.posX) / this.boatPosRotationIncrements;
-                double y = this.posY + (this.boatY - this.posY) / this.boatPosRotationIncrements;
-                double z = this.posZ + (this.boatZ - this.posZ) / this.boatPosRotationIncrements;
+                double x = this.posX + (this.boatX - this.posX) / (double) this.boatPosRotationIncrements;
+                double y = this.posY + (this.boatY - this.posY) / (double) this.boatPosRotationIncrements;
+                double z = this.posZ + (this.boatZ - this.posZ) / (double) this.boatPosRotationIncrements;
 
                 double d10 = MathHelper.wrapAngleTo180_double(this.boatYaw - this.rotationYaw);
-                this.rotationYaw = (float) (this.rotationYaw + d10 / this.boatPosRotationIncrements);
-                this.rotationPitch = (float) (this.rotationPitch + (this.boatPitch - this.rotationPitch) / this.boatPosRotationIncrements);
+                this.rotationYaw = (float) (this.rotationYaw + d10 / (double) this.boatPosRotationIncrements);
+                this.rotationPitch = (float) (this.rotationPitch + (this.boatPitch - this.rotationPitch) / (double) this.boatPosRotationIncrements);
                 this.boatPosRotationIncrements--;
                 this.setPosition(x, y, z);
                 this.setRotation(this.rotationYaw, this.rotationPitch);
@@ -250,7 +246,7 @@ public abstract class EntityNKBoat extends EntityBoat {
         } else {
             // шаталити
             if (shiftY < 1) {
-                this.motionY += 0.04D * (shiftY * 2 - 1);
+                this.motionY += 0.04 * (shiftY * 2 - 1);
             } else {
                 if (this.motionY < 0) {
                     this.motionY /= 2D;
@@ -261,8 +257,8 @@ public abstract class EntityNKBoat extends EntityBoat {
             if (this.riddenByEntity != null && this.riddenByEntity instanceof EntityLivingBase) {
                 EntityLivingBase entitylivingbase = (EntityLivingBase) this.riddenByEntity;
                 float f = this.riddenByEntity.rotationYaw - entitylivingbase.moveStrafing * 90;
-                this.motionX += -Math.sin(f * Math.PI / 180F) * this.speedMultiplier * 0.05;
-                this.motionZ += Math.cos(f * Math.PI / 180F) * this.speedMultiplier * 0.05;
+                this.motionX += -Math.sin(f * Math.PI / 180F) * this.speedMultiplier * entitylivingbase.moveForward * 0.05;
+                this.motionZ += Math.cos(f * Math.PI / 180F) * this.speedMultiplier * entitylivingbase.moveForward * 0.05;
             }
 
             double newMotion = Math.sqrt(this.motionX * this.motionX + this.motionZ * this.motionZ);
@@ -274,13 +270,13 @@ public abstract class EntityNKBoat extends EntityBoat {
             }
 
             if (newMotion > motion && this.speedMultiplier < MAX_VELOCITY) {
-                this.speedMultiplier += (MAX_VELOCITY - this.speedMultiplier) / 50D;//35D;
+                this.speedMultiplier += (MAX_VELOCITY - this.speedMultiplier) / 35D;
 
                 if (this.speedMultiplier > MAX_VELOCITY) {
                     this.speedMultiplier = MAX_VELOCITY;
                 }
             } else {
-                this.speedMultiplier -= (this.speedMultiplier - 0.1) / 50D;//35D;
+                this.speedMultiplier -= (this.speedMultiplier - 0.1) / 35D;
 
                 if (this.speedMultiplier < 0.1) {
                     this.speedMultiplier = 0.1;
@@ -294,12 +290,6 @@ public abstract class EntityNKBoat extends EntityBoat {
             }
 
             this.moveEntity(this.motionX, this.motionY, this.motionZ);
-
-            if (this.isCollidedHorizontally && motion > 0.2) {
-                //if (!this.worldObj.isRemote && !this.isDead) {
-                //this.setDead();
-                //}
-            }
 
             this.rotationPitch = 0;
             double rotation = this.rotationYaw;
@@ -326,10 +316,8 @@ public abstract class EntityNKBoat extends EntityBoat {
             // check for collisions with entities
             if (!this.worldObj.isRemote) {
                 List list = this.worldObj.getEntitiesWithinAABBExcludingEntity(this, this.getEntityBoundingBox().expand(0.2, 0, 0.2));
-                int i;
-
                 if (list != null && !list.isEmpty()) {
-                    for (i = 0; i < list.size(); i++) {
+                    for (int i = 0; i < list.size(); i++) {
                         Entity entity = (Entity) list.get(i);
 
                         if (entity != this.riddenByEntity && entity.canBePushed() && entity instanceof EntityNKBoat) {
@@ -339,7 +327,7 @@ public abstract class EntityNKBoat extends EntityBoat {
                 }
 
                 // remove waterlily
-                if (material == Material.water) {
+                if (getWaterMaterial() == Material.water) {
                     int y = MathHelper.floor_double(this.posY);
 
                     int minX = MathHelper.floor_double(this.getEntityBoundingBox().minX - 0.2);
@@ -377,4 +365,8 @@ public abstract class EntityNKBoat extends EntityBoat {
     }
 
     protected abstract EnumParticleTypes getParticles();
+
+    protected abstract Material getWaterMaterial();
+
+    protected abstract double getYShift();
 }

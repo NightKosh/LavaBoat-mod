@@ -49,16 +49,6 @@ public class EntityLavaBoat extends EntityNKBoat {
         return attackEntityFrom(damageSource, 3, par2);
     }
 
-    /**
-     * Called to update the entity's position/logic.
-     */
-    @Override
-    public void onUpdate() {
-        super.onUpdate();
-
-        onUpdate(Material.lava, -0.05);
-    }
-
     @Override
     protected EnumParticleTypes getParticles() {
         return EnumParticleTypes.LAVA;
@@ -71,5 +61,15 @@ public class EntityLavaBoat extends EntityNKBoat {
             player.addPotionEffect(effect);
         }
         super.onCollideWithPlayer(player);
+    }
+
+    @Override
+    protected Material getWaterMaterial() {
+        return Material.lava;
+    }
+
+    @Override
+    protected double getYShift() {
+        return -0.05;
     }
 }

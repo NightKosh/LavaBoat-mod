@@ -36,18 +36,18 @@ public class EntityReinforcedBoat extends EntityNKBoat {
         return attackEntityFrom(damageSource, 0, par2);
     }
 
-    /**
-     * Called to update the entity's position/logic.
-     */
-    @Override
-    public void onUpdate() {
-        super.onUpdate();
-
-        this.onUpdate(Material.water, -0.05);
-    }
-
     @Override
     protected EnumParticleTypes getParticles() {
         return EnumParticleTypes.WATER_SPLASH;
+    }
+
+    @Override
+    protected Material getWaterMaterial() {
+        return Material.water;
+    }
+
+    @Override
+    protected double getYShift() {
+        return -0.05;
     }
 }

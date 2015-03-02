@@ -42,7 +42,9 @@ public class ModLavaBoat {
         lavaBoat = new ItemLavaBoat();
         GameRegistry.registerItem(lavaBoat, "LBBoat");
         Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(lavaBoat, 0, Resources.reinforcedBoatModel);
+        Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(lavaBoat, 1, Resources.doubleReinforcedBoatModel);
         Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(lavaBoat, 3, Resources.lavaBoatModel);
+        Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(lavaBoat, 4, Resources.doubleLavaBoatModel);
         ModelBakery.addVariantName(lavaBoat, new String[]{"lavaboat:LBReinforcedBoat", "lavaboat:LBDoubleReinforcedBoat", "lavaboat:LBCargoReinforcedBoat",
                 "lavaboat:LBLavaBoat", "lavaboat:LBDoubleLavaBoat", "lavaboat:LBCargoLavaBoat"});
 
@@ -53,25 +55,15 @@ public class ModLavaBoat {
         GameRegistry.addRecipe(new ItemStack(lavaBoat, 1, 4), "xx", 'x', new ItemStack(lavaBoat, 1, 2));
 
 
-        EntityRegistry.registerGlobalEntityID(EntityReinforcedBoat.class, "ReinforcedBoat", EntityRegistry.findGlobalUniqueEntityId());
         EntityRegistry.registerModEntity(EntityReinforcedBoat.class, "ReinforcedBoat", 0, this, 40, 1, true);
-//        LanguageRegistry.instance().addStringLocalization("entity.ReinforcedBoat.name", "Reinforced boat");
 
-        EntityRegistry.registerGlobalEntityID(EntityDoubleReinforcedBoat.class, "DoubleReinforcedBoat", EntityRegistry.findGlobalUniqueEntityId());
         EntityRegistry.registerModEntity(EntityDoubleReinforcedBoat.class, "DoubleReinforcedBoat", 1, this, 40, 1, true);
-//        LanguageRegistry.instance().addStringLocalization("entity.DoubleReinforcedBoat.name", "Reinforced double boat");
 
-        EntityRegistry.registerGlobalEntityID(EntityLavaBoat.class, "LavaBoat", EntityRegistry.findGlobalUniqueEntityId());
         EntityRegistry.registerModEntity(EntityLavaBoat.class, "LavaBoat", 3, this, 40, 1, true);
-//        LanguageRegistry.instance().addStringLocalization("entity.LavaBoat.name", "Lava boat");
 
-        EntityRegistry.registerGlobalEntityID(EntityDoubleLavaBoat.class, "DoubleLavaBoat", EntityRegistry.findGlobalUniqueEntityId());
         EntityRegistry.registerModEntity(EntityDoubleLavaBoat.class, "DoubleLavaBoat", 4, this, 40, 1, true);
-//        LanguageRegistry.instance().addStringLocalization("entity.DoubleLavaBoat.name", "Double lava boat");
 
-//        EntityRegistry.registerGlobalEntityID(EntityPetBoat.class, "PetBoat", EntityRegistry.findGlobalUniqueEntityId());
 //        EntityRegistry.registerModEntity(EntityPetBoat.class, "PetBoat", 6, this, 40, 1, true);
-//        LanguageRegistry.instance().addStringLocalization("entity.PetBoat.name", "Pet boat");
 
         proxy.registerRenderers();
     }

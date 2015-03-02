@@ -137,7 +137,7 @@ public class ItemLavaBoat extends Item {
     @SideOnly(Side.CLIENT)
     public void getSubItems(Item item, CreativeTabs tab, List list) {
         for (int i = 0; i < NAMES.length; i++) {
-            if (i == 0 || i == 3) //TODO
+            if (i != 2 && i != 5) //TODO
                 list.add(new ItemStack(item, 1, i));
         }
     }

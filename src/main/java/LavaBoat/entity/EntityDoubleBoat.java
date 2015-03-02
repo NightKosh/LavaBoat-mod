@@ -121,8 +121,8 @@ public abstract class EntityDoubleBoat extends EntityNKBoat {
      * Called to update the entity's position/logic.
      */
     @Override
-    protected void onUpdate(Material material, double yShift) {
-        super.onUpdate(material, yShift);
+    public void onUpdate() {
+        super.onUpdate();
 
 
         //System.out.println("Boat position " + this.posX + "x" + this.posY + "x" + this.posZ);

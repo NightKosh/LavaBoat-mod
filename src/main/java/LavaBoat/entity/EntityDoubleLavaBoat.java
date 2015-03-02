@@ -48,18 +48,18 @@ public class EntityDoubleLavaBoat extends EntityDoubleBoat {
         return attackEntityFrom(damageSource, 4, par2);
     }
 
-    /**
-     * Called to update the entity's position/logic.
-     */
-    @Override
-    public void onUpdate() {
-        super.onUpdate();
-
-        onUpdate(Material.lava, -0.4);
-    }
-
     @Override
     protected EnumParticleTypes getParticles() {
         return EnumParticleTypes.LAVA;
+    }
+
+    @Override
+    protected Material getWaterMaterial() {
+        return Material.lava;
+    }
+
+    @Override
+    protected double getYShift() {
+        return -0.4;
     }
 }
