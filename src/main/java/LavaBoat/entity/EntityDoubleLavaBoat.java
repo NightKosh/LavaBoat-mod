@@ -1,6 +1,10 @@
 package LavaBoat.entity;
 
 import net.minecraft.block.material.Material;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.potion.Potion;
+import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.world.World;
 
@@ -26,6 +30,28 @@ public class EntityDoubleLavaBoat extends EntityDoubleBoat {
         this.prevPosX = x;
         this.prevPosY = y;
         this.prevPosZ = z;
+    }
+
+    @Override
+    public void onUpdate() {
+        super.onUpdate();
+
+        if (this.mob != null) {
+            addFireProtection(mob);
+        }
+    }
+
+    @Override
+    public void onCollideWithPlayer(EntityPlayer player) {
+        if (this.riddenByEntity != null && this.riddenByEntity == player) {
+            addFireProtection(player);
+        }
+        super.onCollideWithPlayer(player);
+    }
+
+    protected void addFireProtection(EntityLivingBase mob) {
+        PotionEffect effect = new PotionEffect(Potion.fireResistance.getId(), 300);
+        mob.addPotionEffect(effect);
     }
 
     /**
