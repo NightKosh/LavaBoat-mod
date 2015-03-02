@@ -45,7 +45,7 @@ public class ModLavaBoat {
         GameRegistry.addRecipe(new ItemStack(lavaBoat, 1, 0), "xyx", "xxx", 'x', Items.iron_ingot, 'y', Items.boat);
         GameRegistry.addRecipe(new ItemStack(lavaBoat, 1, 1), "xx", 'x', new ItemStack(lavaBoat, 1, 0));
         GameRegistry.addRecipe(new ItemStack(lavaBoat, 1, 3), "xyx", "xxx", 'x', Blocks.obsidian, 'y', new ItemStack(lavaBoat, 1, 0));
-        GameRegistry.addRecipe(new ItemStack(lavaBoat, 1, 4), "xx", 'x', new ItemStack(lavaBoat, 1, 2));
+        GameRegistry.addRecipe(new ItemStack(lavaBoat, 1, 4), "xx", 'x', new ItemStack(lavaBoat, 1, 3));
 
 
         EntityRegistry.registerModEntity(EntityReinforcedBoat.class, "ReinforcedBoat", 0, this, 40, 1, true);
