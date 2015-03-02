@@ -6,3 +6,12 @@ item.cargo_reinforced_boat.name=Грузовая укреплённая лодк
 item.lava_boat.name=Лавовая лодка
 item.large_lava_boat.name=Большая лавовая лодка
 item.cargo_lava_boat.name=Грузовая лавовая лодка
+
+
+# Boats
+entity.ReinforcedBoat.name=Укреплённая лодка
+entity.DoubleReinforcedBoat.name=Большая укреплённая лодка
+entity.CargoReinforcedBoat.name=Грузовая укреплённая лодка
+entity.LavaBoat.name=Лавовая лодка
+entity.DoubleLavaBoat.name=Большая лавовая лодка
+entity.CargoLavaBoat.name=Грузовая лавовая лодка

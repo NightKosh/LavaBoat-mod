@@ -1,8 +1,17 @@
 
 # Items
-item.reinforced_boat.name=Reinforced boat
-item.large_reinforced_boat.name=Large reinforced boat
-item.cargo_reinforced_boat.name=Cargo reinforced boat
-item.lava_boat.name=Lava boat
-item.large_lava_boat.name=Large lava boat
-item.cargo_lava_boat.name=Cargo lava boat
+item.reinforced_boat.name=Reinforced Boat
+item.large_reinforced_boat.name=Large Reinforced Boat
+item.cargo_reinforced_boat.name=Cargo Reinforced Boat
+item.lava_boat.name=Lava Boat
+item.large_lava_boat.name=Large Lava Boat
+item.cargo_lava_boat.name=Cargo Lava Boat
+
+
+# Boats
+entity.ReinforcedBoat.name=Reinforced Boat
+entity.DoubleReinforcedBoat.name=Large Reinforced Boat
+entity.CargoReinforcedBoat.name=Cargo Reinforced Boat
+entity.LavaBoat.name=Lava Boat
+entity.DoubleLavaBoat.name=Large Lava Boat
+entity.CargoLavaBoat.name=Cargo Lava Boat
