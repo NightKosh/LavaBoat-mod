@@ -5,8 +5,6 @@ import LavaBoat.entity.EntityDoubleReinforcedBoat;
 import LavaBoat.entity.EntityLavaBoat;
 import LavaBoat.entity.EntityReinforcedBoat;
 import LavaBoat.item.ItemLavaBoat;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
@@ -41,12 +39,7 @@ public class ModLavaBoat {
     public void load(FMLInitializationEvent event) {
         lavaBoat = new ItemLavaBoat();
         GameRegistry.registerItem(lavaBoat, "LBBoat");
-        Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(lavaBoat, 0, Resources.reinforcedBoatModel);
-        Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(lavaBoat, 1, Resources.doubleReinforcedBoatModel);
-        Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(lavaBoat, 3, Resources.lavaBoatModel);
-        Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(lavaBoat, 4, Resources.doubleLavaBoatModel);
-        ModelBakery.addVariantName(lavaBoat, new String[]{"lavaboat:LBReinforcedBoat", "lavaboat:LBDoubleReinforcedBoat", "lavaboat:LBCargoReinforcedBoat",
-                "lavaboat:LBLavaBoat", "lavaboat:LBDoubleLavaBoat", "lavaboat:LBCargoLavaBoat"});
+        proxy.registerModels();
 
         // recipe
         GameRegistry.addRecipe(new ItemStack(lavaBoat, 1, 0), "xyx", "xxx", 'x', Items.iron_ingot, 'y', Items.boat);
@@ -56,11 +49,8 @@ public class ModLavaBoat {
 
 
         EntityRegistry.registerModEntity(EntityReinforcedBoat.class, "ReinforcedBoat", 0, this, 40, 1, true);
-
         EntityRegistry.registerModEntity(EntityDoubleReinforcedBoat.class, "DoubleReinforcedBoat", 1, this, 40, 1, true);
-
         EntityRegistry.registerModEntity(EntityLavaBoat.class, "LavaBoat", 3, this, 40, 1, true);
-
         EntityRegistry.registerModEntity(EntityDoubleLavaBoat.class, "DoubleLavaBoat", 4, this, 40, 1, true);
 
         proxy.registerRenderers();
