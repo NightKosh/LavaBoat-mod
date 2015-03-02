@@ -1,9 +1,6 @@
 package LavaBoat;
 
-import LavaBoat.entity.EntityDoubleLavaBoat;
-import LavaBoat.entity.EntityDoubleReinforcedBoat;
-import LavaBoat.entity.EntityLavaBoat;
-import LavaBoat.entity.EntityReinforcedBoat;
+import LavaBoat.entity.*;
 import LavaBoat.item.ItemLavaBoat;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.model.ModelBakery;
@@ -63,7 +60,7 @@ public class ModLavaBoat {
 
         EntityRegistry.registerModEntity(EntityDoubleLavaBoat.class, "DoubleLavaBoat", 4, this, 40, 1, true);
 
-//        EntityRegistry.registerModEntity(EntityPetBoat.class, "PetBoat", 6, this, 40, 1, true);
+        EntityRegistry.registerModEntity(EntityPetBoat.class, "PetBoat", 6, this, 40, 1, true);
 
         proxy.registerRenderers();
     }

@@ -1,17 +1,9 @@
 package LavaBoat.entity;
 
-import LavaBoat.ModLavaBoat;
-import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.world.World;
-
-import java.util.Random;
 
 /*
  * LavaBoat mod
@@ -25,7 +17,7 @@ public abstract class EntityDoubleBoat extends EntityNKBoat {
 
     public EntityDoubleBoat(World world) {
         super(world);
-        this.setSize(3F, 1.25F, 0.6F);
+        this.setSize(3, 1.25F, 0.6F);
 
         this.petSeat = new EntityPetBoat(world, this);
         worldObj.spawnEntityInWorld(this.petSeat);
@@ -70,16 +62,15 @@ public abstract class EntityDoubleBoat extends EntityNKBoat {
     public boolean interactFirst(EntityPlayer player) {
         if (!this.worldObj.isRemote) {
             if (this.riddenByEntity == null) {
-                System.out.println("interact");
+                System.out.println("interact");//TODO
                 player.mountEntity(this);
 
                 if (this.petSeat.riddenByEntity == null) {
-                    System.out.println("mount");
+                    System.out.println("mount");//TODO
                     petSeat.findAndMountPet();
                 }
             } else if (this.petSeat.riddenByEntity != null) {
-
-                System.out.println("unmount");
+                System.out.println("unmount");//TODO
                 petSeat.unmountPet();
             }
         }
@@ -87,34 +78,9 @@ public abstract class EntityDoubleBoat extends EntityNKBoat {
         return true;
     }
 
-    /**
-     * Applies a velocity to each of the entities pushing them away from each
-     * other. Args: entity
-     */
     @Override
-    public void applyEntityCollision(Entity entity) {
-        if (!this.worldObj.isRemote) {
-            if (entity != this.riddenByEntity && entity != this.petSeat && entity != this.petSeat.riddenByEntity || this.petSeat == null) {
-                if (this.riddenByEntity != null) {
-                    if (this.motionX * this.motionX + this.motionZ * this.motionZ > 0.01D) {
-                        entity.motionX = this.motionX * 6;
-                        entity.motionZ = this.motionX * 6;
-                        entity.motionY = 0.5;
-                        if (Math.abs(this.motionX) > Math.abs(this.motionZ)) {
-                            entity.motionZ += new Random().nextFloat() - 0.5;
-                        } else {
-                            entity.motionX += new Random().nextFloat() - 0.5;
-                        }
-                    }
-                } else {
-                    if (entity instanceof EntityLiving && !(entity instanceof EntityPlayer) && this.motionX * this.motionX + this.motionZ * this.motionZ > 0.01D) {
-                        entity.mountEntity(this);
-                    } else {
-                        super.applyEntityCollision(entity);
-                    }
-                }
-            }
-        }
+    protected boolean additionalCollisionChecks(Entity entity) {
+        return entity != this.petSeat && entity != this.petSeat.riddenByEntity;
     }
 
     /**
@@ -124,45 +90,12 @@ public abstract class EntityDoubleBoat extends EntityNKBoat {
     public void onUpdate() {
         super.onUpdate();
 
-
-        //System.out.println("Boat position " + this.posX + "x" + this.posY + "x" + this.posZ);
-        //System.out.println("Pet boat position " + this.petSeat.posX + "x" + this.petSeat.posY + "x" + this.petSeat.posZ);
-        //if (this.petSeat.riddenByEntity != null)
-        //System.out.println("Pet position " + this.petSeat.riddenByEntity.posX + "x" + this.petSeat.riddenByEntity.posY + "x" + this.petSeat.riddenByEntity.posZ);
-
-        //System.out.println("---------------------");
-    }
-
-    /**
-     * Called when the entity is attacked.
-     */
-    @Override
-    public boolean attackEntityFrom(DamageSource damageSource, int itemDamage, float par2) {
-        if (this.isEntityInvulnerable(damageSource)) {
-            return false;
-        } else if (!this.worldObj.isRemote && !this.isDead) {
-            if (damageSource.getEntity() instanceof EntityPlayer) {
-                EntityPlayer player = (EntityPlayer) damageSource.getEntity();
-                byte emptySlot = getPlayerEmptySlot(player.inventory.mainInventory);
-                if (emptySlot != -1) {
-                    player.inventory.setInventorySlotContents(emptySlot, new ItemStack(ModLavaBoat.lavaBoat, 1, itemDamage));
-                    this.setDead();
-                }
-            } else {
-                this.setForwardDirection(-this.getForwardDirection());
-                this.setTimeSinceHit(10);
-                this.setDamageTaken((int) (this.getDamageTaken() + par2 * 10));
-                this.setBeenAttacked();
-
-                if (this.getDamageTaken() > 200) {
-                    this.entityDropItem(new ItemStack(ModLavaBoat.lavaBoat, 1, itemDamage), 0);
-                    this.setDead();
-                }
-            }
-
-            return true;
-        } else {
-            return true;
-        }
+//TODO
+//        System.out.println("Boat position " + this.posX + "x" + this.posY + "x" + this.posZ);
+//        System.out.println("Pet boat position " + this.petSeat.posX + "x" + this.petSeat.posY + "x" + this.petSeat.posZ);
+//        if (this.petSeat.riddenByEntity != null)
+//        System.out.println("Pet position " + this.petSeat.riddenByEntity.posX + "x" + this.petSeat.riddenByEntity.posY + "x" + this.petSeat.riddenByEntity.posZ);
+//
+//        System.out.println("---------------------");
     }
 }

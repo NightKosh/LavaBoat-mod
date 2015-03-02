@@ -1,7 +1,6 @@
 package LavaBoat.entity;
 
 import net.minecraft.block.material.Material;
-import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.world.World;
 
@@ -28,14 +27,6 @@ public class EntityReinforcedBoat extends EntityNKBoat {
         this.prevPosZ = z;
     }
 
-    /**
-     * Called when the entity is attacked.
-     */
-    @Override
-    public boolean attackEntityFrom(DamageSource damageSource, float par2) {
-        return attackEntityFrom(damageSource, 0, par2);
-    }
-
     @Override
     protected EnumParticleTypes getParticles() {
         return EnumParticleTypes.WATER_SPLASH;
@@ -49,5 +40,10 @@ public class EntityReinforcedBoat extends EntityNKBoat {
     @Override
     protected double getYShift() {
         return -0.05;
+    }
+
+    @Override
+    protected int getItemDamage() {
+        return 0;
     }
 }

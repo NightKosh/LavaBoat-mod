@@ -66,7 +66,8 @@ public abstract class EntityNKBoat extends EntityBoat {
     /**
      * Called when the entity is attacked.
      */
-    public boolean attackEntityFrom(DamageSource damageSource, int itemDamage, float par2) {
+    @Override
+    public boolean attackEntityFrom(DamageSource damageSource, float par2) {
         if (this.isEntityInvulnerable(damageSource)) {
             return false;
         } else if (!this.worldObj.isRemote && !this.isDead) {
@@ -74,7 +75,7 @@ public abstract class EntityNKBoat extends EntityBoat {
                 EntityPlayer player = (EntityPlayer) damageSource.getEntity();
                 byte emptySlot = getPlayerEmptySlot(player.inventory.mainInventory);
                 if (emptySlot != -1) {
-                    player.inventory.setInventorySlotContents(emptySlot, new ItemStack(ModLavaBoat.lavaBoat, 1, itemDamage));
+                    player.inventory.setInventorySlotContents(emptySlot, new ItemStack(ModLavaBoat.lavaBoat, 1, getItemDamage()));
                     this.setDead();
                 }
             } else {
@@ -84,7 +85,7 @@ public abstract class EntityNKBoat extends EntityBoat {
                 this.setBeenAttacked();
 
                 if (this.getDamageTaken() > 200) {
-                    this.entityDropItem(new ItemStack(ModLavaBoat.lavaBoat, 1, itemDamage), 0);
+                    this.entityDropItem(new ItemStack(ModLavaBoat.lavaBoat, 1, getItemDamage()), 0);
                     this.setDead();
                 }
             }
@@ -145,9 +146,9 @@ public abstract class EntityNKBoat extends EntityBoat {
     @Override
     public void applyEntityCollision(Entity entity) {
         if (!this.worldObj.isRemote) {
-            if (entity != this.riddenByEntity) {
+            if (entity != this.riddenByEntity && additionalCollisionChecks(entity)) {
                 if (this.riddenByEntity != null) {
-                    if (this.motionX * this.motionX + this.motionZ * this.motionZ > 0.01D) {
+                    if (this.motionX * this.motionX + this.motionZ * this.motionZ > 0.01) {
                         entity.motionX = this.motionX * 6;
                         entity.motionZ = this.motionX * 6;
                         entity.motionY = 0.5;
@@ -166,6 +167,10 @@ public abstract class EntityNKBoat extends EntityBoat {
                 }
             }
         }
+    }
+
+    protected boolean additionalCollisionChecks(Entity entity) {
+        return true;
     }
 
     protected void spawnSplash(double d3) {
@@ -369,4 +374,6 @@ public abstract class EntityNKBoat extends EntityBoat {
     protected abstract Material getWaterMaterial();
 
     protected abstract double getYShift();
+
+    protected abstract int getItemDamage();
 }

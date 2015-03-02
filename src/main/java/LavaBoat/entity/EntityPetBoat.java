@@ -96,12 +96,12 @@ public class EntityPetBoat extends Entity {
 
     @Override
     public AxisAlignedBB getCollisionBox(Entity entity) {
-        return entity.getEntityBoundingBox();
+        return null;
     }
 
     @Override
     public AxisAlignedBB getBoundingBox() {
-        return this.getEntityBoundingBox();
+        return null;
     }
 
     @Override
@@ -149,7 +149,7 @@ public class EntityPetBoat extends Entity {
                 this.boat.getEntityBoundingBox().maxX + 7, this.boat.getEntityBoundingBox().maxY + 7, this.boat.getEntityBoundingBox().maxZ + 7);
 
         if (!mountPet(mountArea, EntityWolf.class)) {
-            this.mountPet(mountArea, EntityOcelot.class);
+            mountPet(mountArea, EntityOcelot.class);
         }
     }
 
@@ -165,7 +165,6 @@ public class EntityPetBoat extends Entity {
             while (it.hasNext()) {
                 pet = it.next();
                 if (pet != null && pet.isTamed() && pet.getOwner() != null && pet.getOwner().equals(this.boat.riddenByEntity) && pet.ridingEntity == null) {
-                    System.out.println("Mount pet " + pet.getOwner().getName());//TODO
                     pet.setSitting(true);
                     pet.mountEntity(this);
 

@@ -4,7 +4,6 @@ import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
-import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.world.World;
 
@@ -41,14 +40,6 @@ public class EntityLavaBoat extends EntityNKBoat {
         return 0.35;
     }
 
-    /**
-     * Called when the entity is attacked.
-     */
-    @Override
-    public boolean attackEntityFrom(DamageSource damageSource, float par2) {
-        return attackEntityFrom(damageSource, 3, par2);
-    }
-
     @Override
     protected EnumParticleTypes getParticles() {
         return EnumParticleTypes.LAVA;
@@ -71,5 +62,10 @@ public class EntityLavaBoat extends EntityNKBoat {
     @Override
     protected double getYShift() {
         return -0.05;
+    }
+
+    @Override
+    protected int getItemDamage() {
+        return 3;
     }
 }
