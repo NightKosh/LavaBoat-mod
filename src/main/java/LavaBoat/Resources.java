@@ -29,7 +29,7 @@ public class Resources {
     
     // models
     public static final ResourceLocation MODEL_REINFORCES_BOAT        = new ResourceLocation(MODEL_LOCATION + "ReinforcedBoat.png");
-    public static final ResourceLocation MODEL_DOUBLE_REINFORCED_BOAT = new ResourceLocation(MODEL_LOCATION + "ReinforcedBoat.png");
+    public static final ResourceLocation MODEL_DOUBLE_REINFORCED_BOAT = new ResourceLocation(MODEL_LOCATION + "ReinforcedDoubleBoat.png");
     public static final ResourceLocation MODEL_CARGO_REINFORCED_BOAT  = new ResourceLocation(MODEL_LOCATION + "ReinforcedDoubleBoat.png");
     public static final ResourceLocation MODEL_LAVA_BOAT              = new ResourceLocation(MODEL_LOCATION + "LavaBoat.png");
     public static final ResourceLocation MODEL_DOUBLE_LAVA_BOAT       = new ResourceLocation(MODEL_LOCATION + "DoubleLavaBoat.png");

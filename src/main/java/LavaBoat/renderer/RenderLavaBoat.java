@@ -42,29 +42,29 @@ public class RenderLavaBoat extends Render {
     public void renderBoat(EntityNKBoat boat, double par2, double par4, double par6, float par8, float par9) {
         GL11.glPushMatrix();
         GL11.glTranslatef((float) par2, (float) par4, (float) par6);
-        GL11.glRotatef(180.0F - par8, 0.0F, 1.0F, 0.0F);
-        float f2 = (float) boat.getTimeSinceHit() - par9;
-        float f3 = (float) boat.getDamageTaken() - par9;
+        GL11.glRotatef(180 - par8, 0, 1, 0);
+        float f2 = boat.getTimeSinceHit() - par9;
+        float f3 = boat.getDamageTaken() - par9;
 
-        if (f3 < 0.0F) {
-            f3 = 0.0F;
+        if (f3 < 0) {
+            f3 = 0;
         }
 
-        if (f2 > 0.0F) {
-            GL11.glRotatef(MathHelper.sin(f2) * f2 * f3 / 10.0F * boat.getForwardDirection(), 1.0F, 0.0F, 0.0F);
+        if (f2 > 0) {
+            GL11.glRotatef(MathHelper.sin(f2) * f2 * f3 / 10F * boat.getForwardDirection(), 1, 0, 0);
         }
 
         float f4 = 0.75F;
         GL11.glScalef(f4, f4, f4);
-        GL11.glScalef(1.0F / f4, 1.0F / f4, 1.0F / f4);
+        GL11.glScalef(1 / f4, 1 / f4, 1 / f4);
 
         getTexture();
-        GL11.glScalef(-1.0F, -1.0F, 1.0F);
+        GL11.glScalef(-1, -1, 1);
 
         if (boatType == 1 || boatType == 3) {
-            GL11.glRotatef(180, 0.0F, 1.0F, 0.0F);
+            GL11.glRotatef(180, 0, 1, 0);
         }
-        this.modelBoat.render(boat, 0.0F, 0.0F, -0.1F, 0.0F, 0.0F, 0.0625F);
+        this.modelBoat.render(boat, 0, 0, -0.1F, 0, 0, 0.0625F);
         GL11.glPopMatrix();
     }
 
